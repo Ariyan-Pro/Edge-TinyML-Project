@@ -1,0 +1,1 @@
+edge-tinyml-prod\Scripts\activate

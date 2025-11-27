@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="2" failures="0" skipped="0" tests="2" time="0.976" timestamp="2025-11-24T16:41:08.547361+05:00" hostname="Ariyan"><testcase classname="" name="tests.unit.test_automation_core" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\dell\Projects\Edge-TinyML-Project\tests\unit\test_automation_core.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\unit\test_automation_core.py:3: in &lt;module&gt;
+    from scripts.automation_core import match_command
+E   ModuleNotFoundError: No module named 'scripts.automation_core'</error></testcase><testcase classname="" name="tests.unit.test_memory_manager" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\dell\Projects\Edge-TinyML-Project\tests\unit\test_memory_manager.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\unit\test_memory_manager.py:4: in &lt;module&gt;
+    from scripts.memory_manager import MemoryManager
+E   ModuleNotFoundError: No module named 'scripts.memory_manager'</error></testcase></testsuite></testsuites>

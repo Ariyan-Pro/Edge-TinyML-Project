@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "content": "Test note from autonomous system",
+    "category": "general",
+    "created": "2025-11-19T19:00:38.183459",
+    "completed": false
+  },
+  {
+    "id": 2,
+    "content": "Add a reminder to buy groceries",
+    "category": "general",
+    "created": "2025-11-19T19:00:39.725106",
+    "completed": false
+  }
+]

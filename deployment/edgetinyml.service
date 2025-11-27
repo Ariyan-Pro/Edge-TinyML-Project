@@ -1,0 +1,46 @@
+﻿[Unit]
+Description=Edge TinyML Production Assistant Service
+Documentation=https://github.com/your-org/edge-tinyml
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=edgetinyml
+Group=edgetinyml
+WorkingDirectory=/opt/edgetinyml
+ExecStart=/opt/edgetinyml/venv/bin/python phase_9-enhanced_intelligence/final_optimized_assistant.py
+
+# Restart configuration
+Restart=on-failure
+RestartSec=30
+RestartPreventExitStatus=255
+StartLimitInterval=300
+StartLimitBurst=10
+
+# Environment
+Environment=EDGE_ALLOW_DESTRUCTIVE=0
+Environment=EDGE_PRODUCTION=1
+Environment=OMP_NUM_THREADS=1
+Environment=TF_NUM_INTEROP_THREADS=1
+Environment=TF_NUM_INTRAOP_THREADS=1
+
+# Security settings
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/opt/edgetinyml/logs /opt/edgetinyml/db
+ReadOnlyPaths=/opt/edgetinyml
+
+# Resource limits
+LimitNOFILE=4096
+LimitNPROC=512
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=edgetinyml
+
+[Install]
+WantedBy=multi-user.target

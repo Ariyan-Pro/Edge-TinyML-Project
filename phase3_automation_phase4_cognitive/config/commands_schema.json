@@ -1,0 +1,100 @@
+﻿{
+  "commands": [
+    {
+      "id": "open_browser",
+      "phrases": ["open browser", "launch chrome", "open google", "start browser"],
+      "action": {"type": "shell", "cmd": "start chrome"},
+      "confirm": false,
+      "category": "app",
+      "safety": "low"
+    },
+    {
+      "id": "open_file_explorer", 
+      "phrases": ["open files", "open explorer", "open file explorer", "show files"],
+      "action": {"type": "shell", "cmd": "explorer ."},
+      "confirm": false,
+      "category": "app",
+      "safety": "low"
+    },
+    {
+      "id": "open_notepad",
+      "phrases": ["open notepad", "start notepad", "launch text editor"],
+      "action": {"type": "shell", "cmd": "notepad.exe"},
+      "confirm": false,
+      "category": "app",
+      "safety": "low"
+    },
+    {
+      "id": "open_calculator",
+      "phrases": ["open calculator", "start calculator", "launch calc"],
+      "action": {"type": "shell", "cmd": "calc.exe"},
+      "confirm": false,
+      "category": "app",
+      "safety": "low"
+    },
+    {
+      "id": "system_info",
+      "phrases": ["system info", "system status", "show system info"],
+      "action": {"type": "python", "function": "get_system_info"},
+      "confirm": false,
+      "category": "info",
+      "safety": "low"
+    },
+    {
+      "id": "network_info",
+      "phrases": ["network status", "show network", "internet connection"],
+      "action": {"type": "python", "function": "get_network_info"},
+      "confirm": false,
+      "category": "info", 
+      "safety": "low"
+    },
+    {
+      "id": "volume_up",
+      "phrases": ["volume up", "increase volume", "louder"],
+      "action": {"type": "python", "function": "volume_up"},
+      "confirm": false,
+      "category": "system",
+      "safety": "low"
+    },
+    {
+      "id": "volume_down", 
+      "phrases": ["volume down", "decrease volume", "quieter"],
+      "action": {"type": "python", "function": "volume_down"},
+      "confirm": false,
+      "category": "system",
+      "safety": "low"
+    },
+    {
+      "id": "mute_volume",
+      "phrases": ["mute volume", "silence", "mute sound"],
+      "action": {"type": "python", "function": "mute_volume"},
+      "confirm": false,
+      "category": "system",
+      "safety": "low"
+    },
+    {
+      "id": "take_screenshot",
+      "phrases": ["take screenshot", "capture screen", "screenshot"],
+      "action": {"type": "python", "function": "take_screenshot"},
+      "confirm": false,
+      "category": "system",
+      "safety": "low"
+    },
+    {
+      "id": "shutdown",
+      "phrases": ["shutdown computer", "turn off", "power off", "shutdown now"],
+      "action": {"type": "shell", "cmd": "shutdown /s /t 30"},
+      "confirm": true,
+      "category": "system",
+      "safety": "high"
+    },
+    {
+      "id": "restart",
+      "phrases": ["restart computer", "reboot", "restart now"],
+      "action": {"type": "shell", "cmd": "shutdown /r /t 30"},
+      "confirm": true,
+      "category": "system",
+      "safety": "high"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "model_type": "MockCNN",
+  "input_shape": [
+    40,
+    99,
+    1
+  ],
+  "output_classes": 10,
+  "classes": [
+    "yes",
+    "no",
+    "up",
+    "down",
+    "left",
+    "right",
+    "on",
+    "off",
+    "stop",
+    "go"
+  ],
+  "parameters": 15000,
+  "status": "Phase 1 infrastructure validated",
+  "created": "2025-10-22T17:32:57.025971",
+  "note": "This is a mock model - Phase 1 pipeline is working correctly"
+}

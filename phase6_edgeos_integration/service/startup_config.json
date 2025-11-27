@@ -1,0 +1,16 @@
+﻿{
+    "service_port": 9845,
+    "voice_trigger_enabled": true,
+    "android_bridge_enabled": true,
+    "check_interval": 5,
+    "log_level": "INFO",
+    "auto_start": true,
+    "max_memory_mb": 512,
+    "allowed_commands": [
+        "voice_assist",
+        "system_info", 
+        "memory_optimize",
+        "app_launch",
+        "web_search"
+    ]
+}

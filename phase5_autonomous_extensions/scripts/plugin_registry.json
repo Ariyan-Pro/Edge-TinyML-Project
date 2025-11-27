@@ -1,0 +1,28 @@
+{
+  "plugins": [
+    {
+      "name": "calculator_tool",
+      "description": "Perform various mathematical calculations and conversions",
+      "safety_level": "safe",
+      "file": "calculator_tool.py",
+      "version": "1.0",
+      "author": "System"
+    },
+    {
+      "name": "notes_tool",
+      "description": "Take and manage personal notes and reminders",
+      "safety_level": "safe",
+      "file": "notes_tool.py",
+      "version": "1.0",
+      "author": "System"
+    },
+    {
+      "name": "weather_tool",
+      "description": "Get current weather information for any location",
+      "safety_level": "safe",
+      "file": "weather_tool.py",
+      "version": "1.0",
+      "author": "System"
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "project": "Edge-TinyML Assistant",
+  "timestamp": 1763984471.6274438,
+  "duration_seconds": 5.193425416946411,
+  "overall_status": "FAIL",
+  "test_results": {
+    "static_analysis": {
+      "flake8_issues": "scripts:0:1: E902 FileNotFoundError: [Errno 2] No such file or directory: 'scripts'\ntests\\unit\\test_basic.py:1:1: F401 'pytest' imported but unused\ntests\\unit\\test_basic.py:2:1: E302 expected 2 blank lines, found 0\n3",
+      "issue_count": 4
+    },
+    "unit_tests": {
+      "passed": false,
+      "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.9, pytest-9.0.1, pluggy-1.6.0 -- C:\\Users\\dell\\Projects\\Edge-TinyML-Project\\edge-tinyml-env\\Scripts\\python.exe\ncachedir: .pytest_cache\nrootdir: C:\\Users\\dell\\Projects\\Edge-TinyML-Project\nplugins: anyio-4.11.0\ncollecting ... collected 1 item / 2 errors\n\n=================================== ERRORS ====================================\n_____________ ERROR collecting tests/unit/test_automation_core.py _____________\nImportError while importing test module 'C:\\Users\\dell\\Projects\\Edge-TinyML-Project\\tests\\unit\\test_automation_core.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n..\\..\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\importlib\\__init__.py:126: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntests\\unit\\test_automation_core.py:3: in <module>\n    from scripts.automation_core import match_command\nE   ModuleNotFoundError: No module named 'scripts.automation_core'\n_____________ ERROR collecting tests/unit/test_memory_manager.py ______________\nImportError while importing test module 'C:\\Users\\dell\\Projects\\Edge-TinyML-Project\\tests\\unit\\test_memory_manager.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n..\\..\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\importlib\\__init__.py:126: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\ntests\\unit\\test_memory_manager.py:4: in <module>\n    from scripts.memory_manager import MemoryManager\nE   ModuleNotFoundError: No module named 'scripts.memory_manager'\n- generated xml file: C:\\Users\\dell\\Projects\\Edge-TinyML-Project\\test_reports\\unit_tests.xml -\n=========================== short test summary info ===========================\nERROR tests/unit/test_automation_core.py\nERROR tests/unit/test_memory_manager.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 2 errors during collection !!!!!!!!!!!!!!!!!!!\n============================== 2 errors in 1.00s ==============================\n",
+      "return_code": 2
+    },
+    "integration_tests": {
+      "passed": true,
+      "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.9, pytest-9.0.1, pluggy-1.6.0 -- C:\\Users\\dell\\Projects\\Edge-TinyML-Project\\edge-tinyml-env\\Scripts\\python.exe\ncachedir: .pytest_cache\nrootdir: C:\\Users\\dell\\Projects\\Edge-TinyML-Project\nplugins: anyio-4.11.0\ncollecting ... collected 2 items\n\ntests/integration/test_basic_integration.py::test_kws_integration PASSED [ 50%]\ntests/integration/test_basic_integration.py::test_audio_pipeline PASSED  [100%]\n\n- generated xml file: C:\\Users\\dell\\Projects\\Edge-TinyML-Project\\test_reports\\integration_tests.xml -\n============================== 2 passed in 0.31s ==============================\n"
+    },
+    "performance": {
+      "kws_latency": {
+        "latency_ms": 4.026174545288086,
+        "pass": true,
+        "result": "4.03 ms",
+        "threshold": "<= 5.0 ms"
+      },
+      "memory_usage": {
+        "memory_mb": 42.015625,
+        "pass": true,
+        "result": "42.0 MB",
+        "threshold": "<= 500 MB"
+      },
+      "pipeline_latency": {
+        "latency_ms": 88.00077438354492,
+        "pass": true,
+        "result": "88.00 ms",
+        "threshold": "<= 100 ms"
+      }
+    },
+    "security": {
+      "offline_mode": {
+        "pass": false,
+        "details": "External connections: 10",
+        "external_connections": 10
+      },
+      "plugin_sandbox": {
+        "pass": true,
+        "details": "Sandbox verification placeholder"
+      },
+      "data_privacy": {
+        "pass": true,
+        "details": "Data privacy checks passed"
+      }
+    },
+    "safety": {
+      "destructive_commands_blocked": true,
+      "confirmation_required": true,
+      "safety_gating_active": true
+    },
+    "fault_injection": {
+      "service_recovery": {
+        "pass": true,
+        "details": "Service recovery verified"
+      },
+      "memory_protection": {
+        "pass": true,
+        "details": "Memory protection active"
+      },
+      "error_handling": {
+        "pass": true,
+        "details": "Error handling functional"
+      }
+    }
+  },
+  "environment": {
+    "python_version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "win32",
+    "test_mode": true
+  }
+}

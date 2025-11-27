@@ -1,0 +1,62 @@
+﻿{
+  "dashboard": {
+    "title": "Edge-TinyML Production Dashboard",
+    "description": "Real-time monitoring for Edge-TinyML Assistant",
+    "tags": ["tinyml", "edge", "production"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "title": "KWS Latency (ms)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(kws_latency_ms_bucket[5m]))",
+            "legendFormat": "P95 Latency"
+          }
+        ],
+        "thresholds": {
+          "steps": [
+            {"color": "green", "value": null},
+            {"color": "yellow", "value": 8},
+            {"color": "red", "value": 10}
+          ]
+        }
+      },
+      {
+        "title": "Wake Word Detections",
+        "type": "bargauge",
+        "targets": [
+          {
+            "expr": "rate(wakeword_detections_total[5m])",
+            "legendFormat": "{{keyword}}"
+          }
+        ]
+      },
+      {
+        "title": "System Resources",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "system_cpu_percent",
+            "legendFormat": "CPU %"
+          },
+          {
+            "expr": "system_memory_percent", 
+            "legendFormat": "Memory %"
+          }
+        ]
+      },
+      {
+        "title": "Safety Blocks",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "rate(safety_blocks_total[1h])",
+            "legendFormat": "Blocks/Hour"
+          }
+        ]
+      }
+    ],
+    "refresh": "5s"
+  }
+}

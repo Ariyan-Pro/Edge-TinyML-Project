@@ -1,0 +1,12 @@
+{
+  "open_browser_tool": {
+    "file": "open_browser_tool.py",
+    "auto_generated": true,
+    "generated_at": "2025-11-20"
+  },
+  "take_screenshot_tool": {
+    "file": "take_screenshot_tool.py",
+    "auto_generated": true,
+    "generated_at": "2025-11-20"
+  }
+}

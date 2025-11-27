@@ -1,0 +1,16 @@
+﻿{
+    "service": {
+        "name": "EdgeTinyMLAssistant",
+        "display_name": "Edge TinyML AI Assistant", 
+        "description": "System-wide AI assistant with self-optimizing capabilities",
+        "start_type": "auto",
+        "dependencies": [],
+        "account": "LocalSystem"
+    },
+    "assistant": {
+        "voice_trigger": true,
+        "android_bridge": false,
+        "auto_optimize": true,
+        "log_level": "INFO"
+    }
+}

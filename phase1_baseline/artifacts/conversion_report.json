@@ -1,0 +1,14 @@
+{
+  "float32": {
+    "size_kb": 261.9765625,
+    "path": "C:\\Users\\dell\\Projects\\Edge-TinyML-Project\\phase1_baseline\\models\\model_float32.tflite"
+  },
+  "dynamic": {
+    "size_kb": 73.890625,
+    "path": "C:\\Users\\dell\\Projects\\Edge-TinyML-Project\\phase1_baseline\\models\\model_dynamic.tflite"
+  },
+  "int8": {
+    "size_kb": 75.59375,
+    "path": "C:\\Users\\dell\\Projects\\Edge-TinyML-Project\\phase1_baseline\\models\\model_int8.tflite"
+  }
+}

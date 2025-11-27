@@ -1,0 +1,30 @@
+{
+  "create a folder for my": {
+    "action": "Created 'My Folder' folder on desktop",
+    "success_count": 1,
+    "last_used": "2025-11-10T19:47:30.816729"
+  },
+  "what is running on my computer": {
+    "action": "Opened Task Manager to show running processes",
+    "success_count": 1,
+    "last_used": "2025-11-10T19:47:41.785944"
+  },
+  "i want to watch": {
+    "action": "Opened browser for you to explore 'I want to watch'",
+    "success_count": 1,
+    "last_used": "2025-11-10T19:47:54.934189"
+  },
+  "create a folder on my projects document": {
+    "action": "Created 'My Folder' folder on desktop",
+    "success_count": 1,
+    "last_used": "2025-11-10T19:48:21.437331"
+  },
+  "create a project name ar": {
+    "action": "Opened browser for you to explore 'create a project name AR'",
+    "success_count": 1,
+    "last_used": "2025-11-10T19:48:51.962562"
+  },
+  "open terminal": "open terminal",
+  "open powershell": "open powershell",
+  "open command prompt": "open command prompt"
+}
