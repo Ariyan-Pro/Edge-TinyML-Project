@@ -5,6 +5,10 @@
 [![Tests](https://img.shields.io/badge/tests-8%2F8%20passed-brightgreen?style=flat&logo=testcafe)](tests/)
 [![Latency](https://img.shields.io/badge/latency-3.64%20ms-ff69b4?style=flat&logo=redis)](docs/benchmarks.md)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20Android-blue?style=flat&logo=windows)](docs/installation.md)
+[![GitHub release](https://img.shields.io/github/v/release/Ariyan-Pro/Edge-TinyML-Project)]()
+[![GitHub stars](https://img.shields.io/github/stars/Ariyan-Pro/Edge-TinyML-Project)]()
+[![GitHub forks](https://img.shields.io/github/forks/Ariyan-Pro/Edge-TinyML-Project)]()
+
 
 &gt; **100 % OFF-GRID • 3.64 ms inference • 99.6 % accuracy • ZERO data leaks**
 
