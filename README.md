@@ -15,7 +15,7 @@
 Edge-TinyML is a **palm-sized**, **fully offline** voice assistant that meets **military-grade** robustness and privacy standards.  
 No cloud. No telemetry. No compromises.
 
-![Edge-TinyML banner](a_logo_for_my_voice_assistant_project.jpeg)
+![Edge-TinyML banner](logo.JPG)
 
 ---
 
