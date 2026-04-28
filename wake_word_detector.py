@@ -1,6 +1,7 @@
 ﻿#!/usr/bin/env python3
 """
 Improved Wake Word Detector - Fixed Audio Issues
+Now with automatic fallback to NumPy backend when TensorFlow is unavailable
 """
 
 import numpy as np
@@ -16,7 +17,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
 # Configuration
-MODEL_PATH = r"..\models\model_int8.tflite"
+MODEL_PATH = Path(__file__).parent / "models" / "model_int8.tflite"
 THRESHOLD = 0.85
 SAMPLE_RATE = 16000
 DURATION = 1.0
@@ -24,11 +25,12 @@ CHUNK_SIZE = 2048  # Increased buffer size to prevent overflow
 
 class WakeWordDetector:
     def __init__(self):
-        self.model_path = Path(MODEL_PATH)
+        self.model_path = MODEL_PATH
         self.interpreter = None
         self.input_details = None
         self.output_details = None
         self.is_listening = False
+        self.using_tensorflow = False
         
         self.labels = ['yes', 'no', 'up', 'down', 'left', 'right', 'on', 'off', 'stop', 'go']
         
@@ -42,19 +44,49 @@ class WakeWordDetector:
     
     def load_model(self):
         print("Loading wake word detection model...")
+        
+        # Try TensorFlow first (production mode)
         try:
             import tensorflow as tf
+            print("  → TensorFlow available, using TFLite backend")
             self.interpreter = tf.lite.Interpreter(model_path=str(self.model_path))
             self.interpreter.allocate_tensors()
             
             self.input_details = self.interpreter.get_input_details()
             self.output_details = self.interpreter.get_output_details()
+            self.using_tensorflow = True
             
-            print(f"Model loaded: {self.model_path.name}")
-            print(f"Listening for: {list(self.wake_word_mapping.keys())}")
+            print(f"  ✅ Model loaded: {self.model_path.name}")
+            print(f"  📊 Input shape: {self.input_details[0]['shape']}")
+            print(f"  🎯 Listening for: {list(self.wake_word_mapping.keys())}")
+            
+        except ImportError:
+            print("  ⚠️  TensorFlow not found, using NumPy backend")
+            self._load_numpy_backend()
+        except Exception as e:
+            print(f"  ⚠️  TFLite loading failed: {e}")
+            print("  → Falling back to NumPy backend")
+            self._load_numpy_backend()
+    
+    def _load_numpy_backend(self):
+        """Load the lightweight NumPy-based inference engine"""
+        try:
+            from models.lightweight_inference import LightweightInference
+            self.interpreter = LightweightInference()
+            self.interpreter.allocate_tensors()
+            
+            self.input_details = self.interpreter.get_input_details()
+            self.output_details = self.interpreter.get_output_details()
+            self.using_tensorflow = False
+            
+            print(f"  ✅ NumPy backend loaded successfully")
+            print(f"  📊 Input shape: {self.input_details[0]['shape']}")
+            print(f"  🎯 Listening for: {list(self.wake_word_mapping.keys())}")
             
         except Exception as e:
-            print(f"Failed to load model: {e}")
+            print(f"  ❌ Failed to load NumPy backend: {e}")
+            print("\n  💡 Run: python minimal_model_generator.py")
+            print("     to generate the required model files.\n")
             sys.exit(1)
     
     def audio_to_melspectrogram(self, audio):
