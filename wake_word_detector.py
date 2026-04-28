@@ -2,19 +2,39 @@
 """
 Improved Wake Word Detector - Fixed Audio Issues
 Now with automatic fallback to NumPy backend when TensorFlow is unavailable
+Graceful handling of optional audio libraries (sounddevice, pyautogui, librosa)
 """
 
 import numpy as np
-import sounddevice as sd
-import librosa
-import time
-import pyautogui
 import sys
 import os
 from pathlib import Path
 
 # Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent.parent))
+
+# Optional imports with graceful fallback
+try:
+    import sounddevice as sd
+    HAS_SOUNDDEVICE = True
+except (ImportError, OSError):
+    HAS_SOUNDDEVICE = False
+    print("⚠️  sounddevice not available (PortAudio missing or not installed)")
+
+try:
+    import librosa
+    HAS_LIBROSA = True
+except ImportError:
+    HAS_LIBROSA = False
+    print("⚠️  librosa not available")
+
+try:
+    import pyautogui
+    HAS_PYAUTOGUI = True
+except ImportError:
+    HAS_PYAUTOGUI = False
+
+import time
 
 # Configuration
 MODEL_PATH = Path(__file__).parent / "models" / "model_int8.tflite"
