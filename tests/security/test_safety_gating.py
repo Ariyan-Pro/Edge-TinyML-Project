@@ -1,4 +1,4 @@
-﻿import pytest
+import pytest
 import os
 import sys
 sys.path.append('phase3_automation_phase4_cognitive/scripts')

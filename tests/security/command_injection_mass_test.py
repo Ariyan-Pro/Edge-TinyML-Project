@@ -1,4 +1,10 @@
-﻿import time
+import time
+import sys
+import os
+
+# Add parent tests directory to path for imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from safety_gating import SafetyGatingSystem
 
 def test_destructive_commands():

@@ -1,4 +1,4 @@
-﻿import threading
+import threading
 import time
 import json
 import os
@@ -35,6 +35,8 @@ def disk_writer(stop_event):
 def run_disk_io_test(duration_minutes=1):  # Reduced duration
     print("🚨 STARTING DISK I/O OVERLOAD TEST")
     
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     from system_metrics import ProductionLogger
     
     stop_event = threading.Event()

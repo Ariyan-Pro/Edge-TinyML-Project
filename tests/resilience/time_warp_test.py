@@ -1,6 +1,12 @@
 # tests/resilience/time_warp_test.py
 import time
 import datetime
+import sys
+import os
+
+# Add parent tests directory to path for imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from system_metrics import ProductionLogger
 
 def test_time_changes():

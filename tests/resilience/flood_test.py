@@ -1,4 +1,4 @@
-﻿import threading
+import threading
 import time
 import random
 from concurrent.futures import ThreadPoolExecutor

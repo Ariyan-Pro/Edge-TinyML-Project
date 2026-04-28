@@ -1,4 +1,4 @@
-﻿import psutil
+import psutil
 import threading
 import time
 import numpy as np
