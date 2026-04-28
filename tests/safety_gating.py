@@ -1,4 +1,4 @@
-﻿import time
+import time
 
 class SafetyGatingSystem:
     def __init__(self):

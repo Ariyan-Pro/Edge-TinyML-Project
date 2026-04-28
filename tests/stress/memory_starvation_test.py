@@ -1,4 +1,4 @@
-﻿import psutil
+import psutil
 import time
 import numpy as np
 

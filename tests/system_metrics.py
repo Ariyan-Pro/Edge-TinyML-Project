@@ -1,9 +1,28 @@
-﻿import psutil
+import psutil
 import time
 import json
 import os
 from datetime import datetime
-from prometheus_client import start_http_server, Histogram, Counter, Gauge
+
+# Graceful prometheus_client handling
+try:
+    from prometheus_client import start_http_server, Histogram, Counter, Gauge
+    HAS_PROMETHEUS = True
+except ImportError:
+    HAS_PROMETHEUS = False
+    # Mock classes for when prometheus is not installed
+    class Histogram:
+        def __init__(self, *args, **kwargs): pass
+        def labels(self, **kwargs): return self
+        def observe(self, value): pass
+    class Counter:
+        def __init__(self, *args, **kwargs): pass
+        def labels(self, **kwargs): return self
+        def inc(self, value=1): pass
+    class Gauge:
+        def __init__(self, *args, **kwargs): pass
+        def set(self, value): pass
+    def start_http_server(port): pass
 
 class ProductionLogger:
     def __init__(self, log_dir="../logs"):
