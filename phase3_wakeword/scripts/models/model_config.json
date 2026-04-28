@@ -1,0 +1,34 @@
+{
+  "architecture": "TwoLayerLinear",
+  "input_shape": [
+    40,
+    99,
+    1
+  ],
+  "num_classes": 10,
+  "labels": [
+    "yes",
+    "no",
+    "up",
+    "down",
+    "left",
+    "right",
+    "on",
+    "off",
+    "stop",
+    "go"
+  ],
+  "weights": {
+    "W1_shape": [
+      3960,
+      64
+    ],
+    "W1_scale": 0.00035922162351198494,
+    "W2_shape": [
+      64,
+      10
+    ],
+    "W2_scale": 0.00033223358332179487
+  },
+  "output_classes": 10
+}

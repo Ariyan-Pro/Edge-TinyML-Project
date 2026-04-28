@@ -1,0 +1,26 @@
+{
+  "architecture": "TwoLayerLinear",
+  "input_shape": [
+    40,
+    99,
+    1
+  ],
+  "num_classes": 10,
+  "labels": [
+    "yes",
+    "no",
+    "up",
+    "down",
+    "left",
+    "right",
+    "on",
+    "off",
+    "stop",
+    "go"
+  ],
+  "weights_file": "model_weights.npz",
+  "weights_size_kb": 920.099609375,
+  "backend": "numpy",
+  "tensorflow_required": false,
+  "created_by": "minimal_model_generator.py"
+}
