@@ -6,16 +6,16 @@
 
 ### Military-Grade OFFLINE Voice Assistant
 
-**100% OFF-GRID · 3.64ms inference · 99.6% accuracy · ZERO data leaks**
+**100% OFF-GRID · ⚠️ Claims documented at [`tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md`](./tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md)**
 
 [![Python](https://img.shields.io/badge/Python-3.11+-blue?style=for-the-badge&logo=python)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge&logo=opensourceinitiative)](LICENSE)
-[![Tests](https://img.shields.io/badge/Tests-8%2F8_Passed-brightgreen?style=for-the-badge)](tests/)
-[![Latency](https://img.shields.io/badge/KWS_Latency-3.64ms-ff69b4?style=for-the-badge)](docs/benchmarks.md)
+[![Tests](https://img.shields.io/badge/Tests-6%2F8_Implemented-orange?style=for-the-badge)](tests/)
+[![Latency](https://img.shields.io/badge/KWS_Latency-~17ms-yellow?style=for-the-badge)](tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md)
 [![Security](https://img.shields.io/badge/Security-21%2F21_Blocked-success?style=for-the-badge&logo=shield)]()
-[![Platform](https://img.shields.io/badge/Platform-MCU_%7C_Windows_%7C_Android-blue?style=for-the-badge)](docs/installation.md)
+[![Platform](https://img.shields.io/badge/Platform-Windows_%7C_Linux_%7C_Android-blue?style=for-the-badge)](docs/installation.md)
 [![Release](https://img.shields.io/github/v/release/Ariyan-Pro/Edge-TinyML-Project?style=for-the-badge)](https://github.com/Ariyan-Pro/Edge-TinyML-Project/releases)
-[![Phase](https://img.shields.io/badge/Phase_10-Certified-gold?style=for-the-badge)]()
+[![Transparency](https://img.shields.io/badge/Status-Radical_Transparency-red?style=for-the-badge)](tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md)
 
 [🚀 Quick Start](#-quick-start) · [🧠 Architecture](#-genius-level-hybrid-architecture) · [🛡️ Security](#️-security-hardening-phase-10-certified) · [📊 Charts](#-generate-charts-locally-matplotlib--powershell) · [🧪 Hardening](#-phase-10-global-hardening-report) · [🐛 Issues](https://github.com/Ariyan-Pro/Edge-TinyML-Project/issues)
 
@@ -25,11 +25,19 @@
 
 ## 🎯 What Is Edge-TinyML?
 
-Edge-TinyML is a palm-sized, fully offline voice assistant engineered to military-grade robustness and privacy standards. It runs entirely on-device — from a $5 ESP32 microcontroller to a Windows enterprise workstation — with **no cloud, no telemetry, and no compromises**.
+Edge-TinyML is a palm-sized, fully offline voice assistant engineered to military-grade robustness and privacy standards. It runs entirely on-device — from Windows workstations to Linux servers — with **no cloud, no telemetry, and no compromises**.
 
-The 77 KB keyword spotting engine achieves 3.64ms inference latency. The 1.1B GGUF cognitive core handles complex commands. A 5-layer strategic intelligence layer connects them. Everything runs offline, always.
+### ⚠️ Performance Claim Transparency
 
-> No cloud. No telemetry. No compromises.
+**Important:** Several performance claims in this document (3.64ms latency, 99.6% accuracy, 180-220MB RAM) are **target specifications** that require production hardware and models to verify. Current development measurements show ~17ms latency on Windows with TensorFlow backend. See [`tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md`](./tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md) for complete reality check.
+
+The architecture supports:
+- **KWS Engine**: Target 77 KB model with sub-5ms inference (production TFLite INT8)
+- **Cognitive Core**: 1.1B GGUF model for complex commands  
+- **Strategic Layer**: 5-layer intelligence connecting KWS to cognitive core
+- **Everything offline, always**
+
+> No cloud. No telemetry. No compromises. Radical transparency about capabilities.
 
 ---
 
@@ -53,15 +61,17 @@ The 77 KB keyword spotting engine achieves 3.64ms inference latency. The 1.1B GG
 
 <div align="center">
 
-| Metric | Target | Achieved | Delta |
-|:-------|:-------|:---------|:------|
-| **KWS Latency** | ≤ 5ms | **3.64ms** | **+27% faster** |
-| **RAM Footprint** | < 500MB | **180–220MB** | **56% leaner** |
-| **Accuracy** | ≥ 90% | **99.6%** | **+9.6%** |
-| **Safety (command shield)** | 100% | **100%** | **Perfect** |
-| **Mean Latency Drift** | — | **0.08ms** | **Phase-10 certified** |
+| Metric | Target | Current (Dev) | Claimed (Production) | Status |
+|:-------|:-------|:--------------|:---------------------|:-------|
+| **KWS Latency** | ≤ 5ms | **~17ms** (Windows/TF) | 3.64ms (TFLite INT8) | 🔴 Unverified |
+| **RAM Footprint** | < 500MB | **42MB** (partial) | 180–220MB (full system) | 🔴 Unverified |
+| **Accuracy** | ≥ 90% | **Untested** | 99.6% | 🔴 Unverified |
+| **Safety (command shield)** | 100% | **100%** | **100%** | ✅ Verified |
+| **Torture Tests** | 8/8 | **6/8** implemented | 8/8 passed | 🟠 Partial |
 
 </div>
+
+> 📊 **Full Reality Check:** See [`tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md`](./tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md) for detailed analysis of what has been independently verified vs. what remains unverified.
 
 ---
 
@@ -519,28 +529,32 @@ print("Saved: charts/ram_by_target.png")
 
 > "Tested to destruction, proven in silence."
 
+### ⚠️ TRANSPARENCY NOTICE
+
+**Claim Verification Status:** See [`tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md`](./tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md) for honest assessment of what has been independently verified vs. what remains unverified.
+
 <div align="center">
 
-| Attack Vector | Abuse Scenario | Result | Evidence |
+| Attack Vector | Abuse Scenario | Claimed Result | Evidence Status |
 |:-------------|:---------------|:-------|:---------|
-| **CPU Saturation** | 100% load × 60 min | 0 latency spikes | [`tests/logs/cpu_sat.log`](./tests/logs/cpu_sat.log) |
-| **Memory Starvation** | 1GB free / 8GB total | 0 crashes, 0 leaks | Valgrind clean |
-| **Security Hammer** | 21 destructive payloads | **100% blocked** | [`tests/reports/sec_hammer.pdf`](./tests/reports/sec_hammer.pdf) |
-| **Flood Attack** | 25 req/s burst | 5.81ms avg latency | Prometheus trace |
-| **Time Warp** | 4 clock-drift extremes | Sync preserved | Chrony attest |
-| **ACPI Hibernation** | 50 rapid cycles | Wake-word intact | HW trace |
-| **Thermal Throttle** | 85°C SoC | 3.72ms max latency | IR camera |
-| **EMI Chamber** | 30 V/m RF noise | 99.4% accuracy | EMI report |
+| **CPU Saturation** | 100% load × 60 min | 0 latency spikes | 🟡 Test exists, reduced runtime |
+| **Memory Starvation** | 1GB free / 8GB total | 0 crashes, 0 leaks | 🟡 Conservative limits |
+| **Security Hammer** | 21 destructive payloads | **100% blocked** | ✅ Verified |
+| **Flood Attack** | 25 req/s burst | 5.81ms avg latency | 🟡 Conservative thread count |
+| **Time Warp** | 4 clock-drift extremes | Sync preserved | ✅ Verified |
+| **ACPI Hibernation** | 50 rapid cycles | Wake-word intact | 🔴 Not implemented |
+| **Thermal Throttle** | 85°C SoC | 3.72ms max latency | 🔴 Not implemented |
+| **EMI Chamber** | 30 V/m RF noise | 99.4% accuracy | 🔴 Not implemented |
 
 </div>
 
 ### Certification Summary
 
 ```
-✅ 8 / 8 torture tests passed
-✅ Mean latency drift: 0.08ms
-✅ Security effectiveness: 100%
-✅ Phase-10 Global Hardening: CERTIFIED
+⚠️  6 / 8 torture tests implemented (EMI, Thermal, ACPI missing)
+⚠️  Phase-10: SELF-CERTIFIED (no external validation)
+✅  Security effectiveness: 100% (on implemented tests)
+📊  Full reality check: tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md
 ```
 
 ### Re-run Certification (PowerShell)
@@ -549,14 +563,20 @@ print("Saved: charts/ram_by_target.png")
 # Activate environment first
 .\edge-tinyml-prod\Scripts\Activate.ps1
 
-# Full torture suite
-python tests/full_regression_suite.py --torture
+# Full torture suite (6/8 tests - EMI/Thermal/ACPI not implemented)
+python tests/full_regression_suite.py
 
 # Individual test categories
-python tests/security/command_injection_mass_test.py  # Security Hammer
-python tests/stress/cpu_saturation_test.py            # CPU Saturation
-python -m pytest tests/torture -k "emmi or thermal"  # EMI + Thermal
-python -m pytest tests/benchmark.py --plot            # Benchmark + plot
+python tests/security/command_injection_mass_test.py  # Security Hammer ✅
+python tests/stress/cpu_saturation_test.py            # CPU Saturation 🟡
+python tests/stress/memory_starvation_test.py         # Memory Starvation 🟡
+python tests/resilience/flood_test.py                 # Flood Attack 🟡
+python tests/resilience/time_warp_test.py             # Time Warp ✅
+python tests/security/file_corruption_test.py         # File Corruption ✅
+python tests/security/virtual_mic_attack.py           # Virtual Mic ✅
+
+# View verification report
+Invoke-Item tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md
 ```
 
 ---
