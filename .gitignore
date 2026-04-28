@@ -1,62 +1,12 @@
 ```
-# Compiled and build artifacts
+# Compiled Python files
 *.pyc
 __pycache__/
-*.o
-*.obj
-*.so
-*.dll
-*.exe
-*.a
-*.out
 
-# Dependencies
-.venv/
-venv/
-env/
-node_modules/
+# Generated images
+*.png
 
-# Build directories
-dist/
-build/
-target/
-*.egg-info/
-
-# Logs and temp files
+# Logs and temporary files
 *.log
 *.tmp
-*.swp
-*.swo
-
-# Environment files
-.env
-.env.local
-*.env.*
-
-# Editors
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Python specific
-*.pyc
-__pycache__/
-*.pyo
-*.pyd
-.Python
-*.so
-
-# Coverage
-coverage/
-htmlcov/
-.coverage
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# Model weight files (if they are large binary files)
-*.npz
-*.tflite
 ```
