@@ -1,0 +1,36 @@
+# === PRODUCTION DEPENDENCIES ===
+# Minimal set for wake word detection in production
+# Compatible with Python 3.11+
+# Optimized for low-disk environments (works with <50MB)
+
+# === CORE ML RUNTIME (Optional - NumPy fallback available) ===
+# TensorFlow is large (~500MB). System works without it using NumPy backend.
+# Uncomment for production: tensorflow>=2.16.0
+tensorflow-cpu>=2.16.0; platform_system != "Darwin"
+tensorflow-macos>=2.16.0; platform_system == "Darwin" and platform_machine == "arm64"
+tensorflow>=2.16.0; platform_system == "Darwin" and platform_machine != "arm64"
+tensorflow-model-optimization>=0.7.5
+
+# === AUDIO PROCESSING (Lightweight alternatives) ===
+# librosa is heavy (~150MB with deps). Using minimal audio stack.
+librosa>=0.10.1; extra == 'full'
+soundfile>=0.12.1
+# Alternative lightweight audio I/O (much smaller than pyaudio)
+sounddevice>=0.4.6
+
+# === SCIENTIFIC COMPUTING (Already installed in most environments) ===
+numpy>=1.24.3,<2.0.0
+scipy>=1.10.1
+
+# === MONITORING & METRICS ===
+prometheus_client>=0.17.0
+
+# === TESTING ===
+pytest>=7.4.0
+
+# === OPTIONAL FULL FEATURE SET ===
+# Install with: pip install -r requirements_prod.txt[full]
+[full]
+librosa>=0.10.1
+pyaudio>=0.2.11
+matplotlib>=3.7.0
