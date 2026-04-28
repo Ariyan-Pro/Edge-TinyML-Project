@@ -1,4 +1,5 @@
-﻿Write-Host "=== EDGE-TINYML PRODUCTION READINESS CHECK ===" -ForegroundColor Cyan
+# UTF-8 encoded PowerShell script
+Write-Host "=== EDGE-TINYML PRODUCTION READINESS CHECK ===" -ForegroundColor Cyan
 
 $files = @(
     "scripts/production_logger.py",
