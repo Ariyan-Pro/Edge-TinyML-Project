@@ -1,0 +1,3 @@
+# Mock TFLite file - use lightweight_inference.py
+# Type: float32
+# Actual inference: NumPy backend

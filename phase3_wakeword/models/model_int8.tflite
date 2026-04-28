@@ -1,0 +1,3 @@
+# Mock TFLite file - use lightweight_inference.py
+# Type: int8
+# Actual inference: NumPy backend
