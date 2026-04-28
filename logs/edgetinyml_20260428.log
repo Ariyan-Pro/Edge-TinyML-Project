@@ -1,0 +1,6 @@
+{"ts": 1777373799613, "session_id": 1777373799, "component": "system", "event": "monitoring_test", "details": {"status": "initialized"}, "environment": "production"}
+{"ts": 1777373799614, "session_id": 1777373799, "component": "kws", "event": "wakeword_detected", "keyword": "yes", "confidence": 0.996, "latency_ms": 3.64, "emotion": "neutral", "audio_energy": 0.015, "environment": "production"}
+{"ts": 1777373799614, "session_id": 1777373799, "component": "safety", "event": "command_blocked", "command": "shutdown", "reason": "safety_mode_active", "environment": "production"}
+{"ts": 1777373884469, "session_id": 1777373884, "component": "system", "event": "monitoring_test", "details": {"status": "initialized"}, "environment": "production"}
+{"ts": 1777373884470, "session_id": 1777373884, "component": "kws", "event": "wakeword_detected", "keyword": "yes", "confidence": 0.996, "latency_ms": 3.64, "emotion": "neutral", "audio_energy": 0.015, "environment": "production"}
+{"ts": 1777373884470, "session_id": 1777373884, "component": "safety", "event": "command_blocked", "command": "shutdown", "reason": "safety_mode_active", "environment": "production"}
