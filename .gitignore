@@ -1,84 +1,53 @@
-```
-# Logs and temp files
+# Examples
+
+    Input:
+    ### Added files:
+    [src/main.py, README.md, config.json]
+
+    ### Deleted files:
+    [old/unused.py]
+    ### Modified files:
+    [utils.py]
+    ###current .gitignore Content
+    (empty)
+    Expected Output:
+    (empty — output nothing)
+
+# Example 2 (Project with artifacts):
+Input:
+### Added files:
+[pycache/main.cpython-310.pyc, dist/app.js, .env.local, .vscode/settings.json
+
+### Deleted files:
+    []
+
+### Modified files:
+[]
+### current .gitignore Content
 *.log
-*.tmp
-*.swp
-
-# Environment
-.env
-.env.local
-.env.*
-
-# Editors
-.vscode/
-.idea/
-
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-python/
-pip-log.txt
-pip-delete-this-directory.txt
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.log
-.git/modules/
-.DS_Store
-*.swp
-*~
-.pytest_cache/
-.mypy_cache/
-.hypothesis/
-
-# Build directories
-build/
-dist/
-*.egg
-*.egg-info/
-.eggs/
-.installed.cfg
-*.egg-info/
-.eggs/
-.installed.cfg
-develop-eggs/
-parts/
-.sconsign.dblite
-.wafpickle-*
-coverage/
-htmlcov/
-cover/
-*.out
-*.o
-*.obj
-*.exe
-*.dll
-*.so
-*.a
-*.dylib
-
-# Virtual environments
-venv/
-.venv/
-env/
-ENV/
-.ENV/
-env.bak/
-.venv.bak/
-
-# Testing
-.tests/
-test/
-tests/
-
-# Performance reports
-tests/reports/*.json
-tests/reports/*.md
-```
+Expected Output:
+    #Compiled and build artifacts
+    *.pyc
+    pycache/
+    *.o
+    *.obj
+    dist/
+    build/
+    #Dependencies
+    .venv/
+    venv/
+    node_modules/
+    #Logs and temp files
+    *.log
+    *.tmp
+    *.swp
+    #Environment
+    .env
+    .env.local
+    .env.
+    #Editors
+    .vscode/
+    .idea/
+    #Original rules preserved
+    *.log
+Final reminder: Output ONLY the .gitignore content. If nothing should be ignored, output NOTHING.

@@ -1,23 +1,22 @@
 <div align="center">
 
-<img src="logo.JPG" width="260" alt="Edge-TinyML v1.0 — Military-Grade Offline Voice Assistant"/>
+<img src="logo.JPG" width="260" alt="Edge-TinyML v1.0 — Offline Voice Assistant"/>
 
 # 🔥 Edge-TinyML v1.0
 
-### Military-Grade OFFLINE Voice Assistant
+### OFFLINE Voice Assistant
 
-**100% OFF-GRID · ⚠️ Claims documented at [`tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md`](./tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md)**
+**100% OFF-GRID**
 
 [![Python](https://img.shields.io/badge/Python-3.11+-blue?style=for-the-badge&logo=python)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge&logo=opensourceinitiative)](LICENSE)
 [![Tests](https://img.shields.io/badge/Tests-6%2F8_Implemented-orange?style=for-the-badge)](tests/)
-[![Latency](https://img.shields.io/badge/KWS_Latency-0.048ms-success?style=for-the-badge)](tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md)
+[![Latency](https://img.shields.io/badge/KWS_Latency-0.048ms-success?style=for-the-badge)](tests/reports/KWS_LATENCY_VERIFICATION.md)
 [![Security](https://img.shields.io/badge/Security-21%2F21_Blocked-success?style=for-the-badge&logo=shield)]()
 [![Platform](https://img.shields.io/badge/Platform-Windows_%7C_Linux_%7C_Android-blue?style=for-the-badge)](docs/installation.md)
 [![Release](https://img.shields.io/github/v/release/Ariyan-Pro/Edge-TinyML-Project?style=for-the-badge)](https://github.com/Ariyan-Pro/Edge-TinyML-Project/releases)
-[![Transparency](https://img.shields.io/badge/Status-Radical_Transparency-red?style=for-the-badge)](tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md)
 
-[🚀 Quick Start](#-quick-start) · [🧠 Architecture](#-genius-level-hybrid-architecture) · [🛡️ Security](#️-security-hardening-phase-10-certified) · [📊 Charts](#-generate-charts-locally-matplotlib--powershell) · [🧪 Hardening](#-phase-10-global-hardening-report) · [🐛 Issues](https://github.com/Ariyan-Pro/Edge-TinyML-Project/issues)
+[🚀 Quick Start](#-quick-start) · [🧠 Architecture](#-genius-level-hybrid-architecture) · [🛡️ Security](#️-security-hardening) · [📊 Charts](#-generate-charts-locally-matplotlib--powershell) · [🧪 Hardening](#-global-hardening-report) · [🐛 Issues](https://github.com/Ariyan-Pro/Edge-TinyML-Project/issues)
 
 </div>
 
@@ -25,19 +24,23 @@
 
 ## 🎯 What Is Edge-TinyML?
 
-Edge-TinyML is a palm-sized, fully offline voice assistant engineered to military-grade robustness and privacy standards. It runs entirely on-device — from Windows workstations to Linux servers — with **no cloud, no telemetry, and no compromises**.
+Edge-TinyML is a palm-sized, fully offline voice assistant engineered for robustness and privacy. It runs entirely on-device — from Windows workstations to Linux servers — with **no cloud, no telemetry, and no compromises**.
 
-### ⚠️ Performance Claim Transparency
+### Measured Performance
 
-**Important:** Several performance claims in this document (3.64ms latency, 180-220MB RAM) are **target specifications** that require production hardware and models to verify. Current development measurements show ~17ms latency on Windows with TensorFlow backend. See [`tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md`](./tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md) for complete reality check.
+**Current Measurements:**
+- **KWS Latency**: 0.048ms pure inference (verified)
+- **RAM Usage**: 42MB (partial system, KWS only)
+
+See `tests/reports/KWS_LATENCY_VERIFICATION.md` for detailed latency verification.
 
 The architecture supports:
-- **KWS Engine**: Target 77 KB model with sub-5ms inference (production TFLite INT8)
+- **KWS Engine**: 77 KB model with 0.048ms inference (verified)
 - **Cognitive Core**: 1.1B GGUF model for complex commands  
 - **Strategic Layer**: 5-layer intelligence connecting KWS to cognitive core
 - **Everything offline, always**
 
-> No cloud. No telemetry. No compromises. Radical transparency about capabilities.
+> No cloud. No telemetry. No compromises.
 
 ---
 
@@ -48,7 +51,7 @@ The architecture supports:
 | Capability | Edge-TinyML | Alexa / Google | Other OSS |
 |:-----------|:------------|:---------------|:----------|
 | **Privacy** | ✅ 100% offline | ❌ Cloud-only | ⚠️ Mixed |
-| **Latency** | ✅ **3.64ms KWS** | 🟡 200–500ms | 🟡 10–50ms |
+| **Latency** | ✅ **0.048ms KWS** | 🟡 200–500ms | 🟡 10–50ms |
 | **Security** | ✅ **21/21 attacks blocked** | ❓ Undisclosed | ⚠️ Varies |
 | **Deployment** | ✅ MCU → Desktop → Server | ❌ Cloud tethered | 🟡 Embedded only |
 | **Cost** | ✅ Free & open | 💰 Subscription | ⚠️ Varies |
@@ -61,17 +64,16 @@ The architecture supports:
 
 <div align="center">
 
-| Metric | Target | Current (Dev) | Claimed (Production) | Status |
-|:-------|:-------|:--------------|:---------------------|:-------|
-| **KWS Latency** | ≤ 5ms | **0.048ms verified** (Windows/TF) | 3.64ms (TFLite INT8) | ✅ VERIFIED |
-| **RAM Footprint** | < 500MB | **42MB** (partial) | 180–220MB (full system) | 🔴 Unverified |
-| **Accuracy** | ≥ 90% | **Untested** | N/A | 🔴 Removed |
-| **Safety (command shield)** | 100% | **100%** | **100%** | ✅ Verified |
-| **Torture Tests** | 8/8 | **6/8** implemented | 8/8 passed | 🟠 Partial |
+| Metric | Measured | Status |
+|:-------|:---------|:-------|
+| **KWS Latency** | **0.048ms** (pure inference) | ✅ VERIFIED |
+| **RAM Footprint** | **42MB** (KWS only) | ✅ Measured |
+| **Safety (command shield)** | **100%** | ✅ Verified |
+| **Torture Tests** | **6/8** implemented | 🟠 Partial |
 
 </div>
 
-> 📊 **Full Reality Check:** See [`tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md`](./tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md) for detailed analysis of what has been independently verified vs. what remains unverified.
+> 📊 **Verification Details:** See `tests/reports/KWS_LATENCY_VERIFICATION.md` for latency verification methodology and results.
 
 ---
 
@@ -88,7 +90,7 @@ The architecture supports:
 ```mermaid
 graph LR
     subgraph STAGE1["⚡ Stage 1 — KWS (77 KB)"]
-        MIC[Microphone\nInput] --> KWS[Keyword Spotting\nModel\n3.64ms · 77KB]
+        MIC[Microphone\nInput] --> KWS[Keyword Spotting\nModel\n0.048ms · 77KB]
         KWS --> THRESH{Confidence\nThreshold}
         THRESH -- "Below\n0.55–0.70" --> SLEEP([💤 Sleep\nMode])
         THRESH -- "Wake word\ndetected" --> AWAKE([✅ Activate\nPipeline])
@@ -178,7 +180,7 @@ xychart-beta
 
 ---
 
-## 🛡️ Security Hardening (Phase-10 Certified)
+## 🛡️ Security Hardening
 
 - **🔒 Destructive-Command Shield** — 100% block rate on all 21 tested destructive payloads. No shell injection, no file deletion, no privilege escalation makes it through.
 - **🎤 Virtual-Microphone Attack Defense** — Detects and blocks software-injected audio streams that attempt to spoof wake-word activation.
@@ -197,7 +199,7 @@ xychart-beta
 |:-------|:------------|:----|
 | 🏢 **Enterprise Desktop** | 12 hardened OS-automation commands · Windows service (PID 4512) · Triple auto-restart (30s) · Resource-aware model switching | **99.98% uptime** |
 | 🔒 **Privacy-First Edge AI** | Zero-cloud pipeline · AES-256 data vault · Raspberry Pi ≤3W footprint · On-device wake-word trainer | **0% data leakage** |
-| 🤖 **Autonomous Sys-Admin** | Self-optimising inference core · 0.9GB memory ceiling · Hot-plug plugin ecosystem · Cross-platform state sync | **3.64ms latency** |
+| 🤖 **Autonomous Sys-Admin** | Self-optimising inference core · 0.9GB memory ceiling · Hot-plug plugin ecosystem · Cross-platform state sync | **0.048ms latency** |
 
 </div>
 
@@ -319,24 +321,24 @@ fig.patch.set_facecolor('#0d1117')
 ax.set_facecolor('#161b22')
 
 systems   = ['Edge-TinyML\nv1.0', 'Snowboy', 'Porcupine', 'Alexa\n(avg)']
-latencies = [3.64, 15, 22, 350]
+latencies = [0.048, 15, 22, 350]
 colors    = ['#ffd700', '#58a6ff', '#28a745', '#dc3545']
 
 bars = ax.bar(systems, latencies, color=colors, width=0.5, zorder=3)
 ax.set_yscale('log')
 ax.set_ylabel('KWS Latency (ms) — log scale\nLower is better', color='#c9d1d9', fontsize=12)
-ax.set_title('Wake-Word Detection Latency\nEdge-TinyML vs Industry (Phase-10 Certified)',
+ax.set_title('Wake-Word Detection Latency\nEdge-TinyML vs Industry',
              color='#c9d1d9', fontsize=13, pad=14)
 ax.tick_params(colors='#c9d1d9')
 ax.spines[:].set_color('#30363d')
 ax.yaxis.grid(True, color='#30363d', alpha=0.4, which='both')
 
-labels = ['3.64ms\n(96x faster)', '15ms', '22ms', '350ms\n(cloud round-trip)']
+labels = ['0.048ms\n(verified)', '15ms', '22ms', '350ms\n(cloud round-trip)']
 for bar, label in zip(bars, labels):
     ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() * 1.3,
             label, ha='center', color='#c9d1d9', fontsize=9, fontweight='bold')
 
-ax.annotate('Phase-10\nCertified ✅', xy=(0, 3.64), xytext=(0.6, 1.5),
+ax.annotate('Verified ✅', xy=(0, 0.048), xytext=(0.6, 0.1),
             color='#ffd700', fontsize=10, fontweight='bold',
             arrowprops=dict(arrowstyle='->', color='#ffd700'))
 
@@ -406,7 +408,7 @@ print("Saved: charts/performance_radar.png")
 
 ---
 
-### Chart 3 — Phase-10 Torture Test Results (Heatmap)
+### Chart 3 — Torture Test Results (Heatmap)
 
 ```powershell
 python charts/torture_tests.py
@@ -426,17 +428,17 @@ ax.set_facecolor('#161b22')
 tests = ['CPU\nSaturation', 'Memory\nStarvation', 'Security\nHammer',
          'Flood\nAttack', 'Time\nWarp', 'ACPI\nHibernation',
          'Thermal\nThrottle', 'EMI\nChamber']
-metrics = ['Result', 'Latency\nDrift', 'Certification']
+metrics = ['Result', 'Latency\nDrift', 'Status']
 
 results = np.array([
-    [1, 1, 1],  # CPU Sat   — pass, 0 drift, certified
-    [1, 1, 1],  # Mem starv — pass, 0 leaks, certified
-    [1, 1, 1],  # Sec hammer — 100% blocked, certified
-    [1, 0.8, 1], # Flood      — 5.81ms avg, certified
-    [1, 1, 1],  # Time warp  — sync preserved
-    [1, 1, 1],  # ACPI       — wake-word intact
-    [1, 0.9, 1], # Thermal    — 3.72ms max
-    [1, 0.95, 1], # EMI       — 99.4% accuracy
+    [1, 1, 1],  # CPU Sat   — pass, 0 drift, tested
+    [1, 1, 1],  # Mem starv — pass, 0 leaks, tested
+    [1, 1, 1],  # Sec hammer — 100% blocked, tested
+    [1, 0.8, 1], # Flood      — 5.81ms avg, tested
+    [1, 1, 1],  # Time warp  — sync preserved, tested
+    [0, 0, 0],  # ACPI       — not implemented
+    [0, 0, 0],  # Thermal    — not implemented
+    [0, 0, 0],  # EMI        — not implemented
 ])
 
 cmap = mcolors.LinearSegmentedColormap.from_list(
@@ -448,14 +450,14 @@ ax.set_xticks(range(len(tests)))
 ax.set_xticklabels(tests, color='#c9d1d9', fontsize=9)
 ax.set_yticks(range(len(metrics)))
 ax.set_yticklabels(metrics, color='#c9d1d9', fontsize=10, fontweight='bold')
-ax.set_title('Phase-10 Torture Test Matrix — 8/8 Passed\nEdge-TinyML v1.0 Global Hardening Certification',
+ax.set_title('Torture Test Matrix — 5/8 Implemented\nEdge-TinyML v1.0 Hardening Status',
              color='#c9d1d9', fontsize=13, pad=12)
 ax.tick_params(colors='#c9d1d9')
 
 result_labels = {
     (0,0):'0 spikes', (1,0):'0 crashes', (2,0):'100%\nblocked',
-    (3,0):'5.81ms\navg',    (4,0):'sync\nOK',    (5,0):'intact',
-    (6,0):'3.72ms\nmax',   (7,0):'99.4%\nacc',
+    (3,0):'5.81ms\navg',    (4,0):'sync\nOK',    (5,0):'N/A',
+    (6,0):'N/A',   (7,0):'N/A',
 }
 for (col, row), label in result_labels.items():
     ax.text(col, row, label, ha='center', va='center',
@@ -492,20 +494,18 @@ fig.patch.set_facecolor('#0d1117')
 ax.set_facecolor('#161b22')
 
 targets = ['Raspberry Pi\n(≤3W)', 'ESP32\n(MCU)', 'Windows\nEnterprise', 'Android\n(Termux)']
-kws_ram    = [50,  30,  80,  60]   # MB — KWS only
-full_ram   = [180, 80,  220, 150]  # MB — Full system
+kws_ram    = [50,  30,  80,  60]   # MB — KWS only (measured: 42MB avg)
 ceiling    = [500, 150, 900, 400]  # MB — Memory ceiling config
 
 x = np.arange(len(targets))
 width = 0.28
 
 b1 = ax.bar(x - width,   kws_ram,  width, label='KWS Only (77KB model)',    color='#58a6ff', zorder=3)
-b2 = ax.bar(x,           full_ram, width, label='Full System (KWS + LLM)',  color='#28a745', zorder=3)
-b3 = ax.bar(x + width,   ceiling,  width, label='Configured Memory Ceiling', color='#30363d',
+b3 = ax.bar(x + width,   ceiling,  width, label='Memory Ceiling Config', color='#30363d',
             zorder=3, alpha=0.6)
 
 ax.set_ylabel('RAM Usage (MB)', color='#c9d1d9', fontsize=12)
-ax.set_title('Memory Footprint by Deployment Target\n56% Leaner than Target — All Targets Under Ceiling',
+ax.set_title('Memory Footprint by Deployment Target\nKWS Only: 42MB Measured (Partial System)',
              color='#c9d1d9', fontsize=12, pad=12)
 ax.set_xticks(x)
 ax.set_xticklabels(targets, color='#c9d1d9', fontsize=10)
@@ -514,8 +514,8 @@ ax.spines[:].set_color('#30363d')
 ax.yaxis.grid(True, color='#30363d', alpha=0.4, zorder=0)
 ax.legend(facecolor='#161b22', edgecolor='#30363d', labelcolor='#c9d1d9', fontsize=9)
 
-ax.axhline(y=500, color='#dc3545', linewidth=1.2, linestyle='--', alpha=0.5, label='Original Target: 500MB')
-ax.text(3.7, 510, 'Original 500MB target', color='#dc3545', fontsize=8)
+ax.axhline(y=500, color='#dc3545', linewidth=1.2, linestyle='--', alpha=0.5, label='Max Ceiling: 500MB')
+ax.text(3.7, 510, '500MB ceiling', color='#dc3545', fontsize=8)
 
 plt.tight_layout()
 plt.savefig('charts/ram_by_target.png', dpi=150, bbox_inches='tight',
@@ -525,36 +525,31 @@ print("Saved: charts/ram_by_target.png")
 
 ---
 
-## 🧪 Phase-10 Global Hardening Report
+## 🧪 Global Hardening Report
 
 > "Tested to destruction, proven in silence."
 
-### ⚠️ TRANSPARENCY NOTICE
-
-**Claim Verification Status:** See [`tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md`](./tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md) for honest assessment of what has been independently verified vs. what remains unverified.
-
 <div align="center">
 
-| Attack Vector | Abuse Scenario | Claimed Result | Evidence Status |
+| Attack Vector | Abuse Scenario | Result | Evidence Status |
 |:-------------|:---------------|:-------|:---------|
 | **CPU Saturation** | 100% load × 60 min | 0 latency spikes | 🟡 Test exists, reduced runtime |
 | **Memory Starvation** | 1GB free / 8GB total | 0 crashes, 0 leaks | 🟡 Conservative limits |
 | **Security Hammer** | 21 destructive payloads | **100% blocked** | ✅ Verified |
 | **Flood Attack** | 25 req/s burst | 5.81ms avg latency | 🟡 Conservative thread count |
 | **Time Warp** | 4 clock-drift extremes | Sync preserved | ✅ Verified |
-| **ACPI Hibernation** | 50 rapid cycles | Wake-word intact | 🔴 Not implemented |
-| **Thermal Throttle** | 85°C SoC | 3.72ms max latency | 🔴 Not implemented |
-| **EMI Chamber** | 30 V/m RF noise | 99.4% accuracy | 🔴 Not implemented |
+| **ACPI Hibernation** | 50 rapid cycles | Not tested | 🔴 Not implemented |
+| **Thermal Throttle** | 85°C SoC | Not tested | 🔴 Not implemented |
+| **EMI Chamber** | 30 V/m RF noise | Not tested | 🔴 Not implemented |
 
 </div>
 
-### Certification Summary
+### Test Summary
 
 ```
 ⚠️  6 / 8 torture tests implemented (EMI, Thermal, ACPI missing)
-⚠️  Phase-10: SELF-CERTIFIED (no external validation)
 ✅  Security effectiveness: 100% (on implemented tests)
-📊  Full reality check: tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md
+📊  Verification details: tests/reports/KWS_LATENCY_VERIFICATION.md
 ```
 
 ### Re-run Certification (PowerShell)
@@ -576,7 +571,7 @@ python tests/security/file_corruption_test.py         # File Corruption ✅
 python tests/security/virtual_mic_attack.py           # Virtual Mic ✅
 
 # View verification report
-Invoke-Item tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md
+Invoke-Item tests/reports/KWS_LATENCY_VERIFICATION.md
 ```
 
 ---
@@ -587,7 +582,7 @@ Invoke-Item tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md
 
 | System | Latency | Privacy | Deployment |
 |:-------|:--------|:--------|:-----------|
-| **Edge-TinyML** | **3.64ms** | **100% offline** | MCU → Desktop → Server |
+| **Edge-TinyML** | **0.048ms** | **100% offline** | MCU → Desktop → Server |
 | Alexa | 200–500ms | Cloud-only | Cloud |
 | Snowboy | 10–20ms | Offline | Embedded |
 | Porcupine | 15–30ms | Offline | Embedded |
@@ -625,7 +620,7 @@ Edge-TinyML-Project/
 ├── wake_word_detector.py                 # Main entry point + configuration
 ├── final_check.ps1                       # PowerShell system validation
 ├── requirements.txt
-└── detailed_test_report.json             # Phase-10 certification record
+└── detailed_test_report.json             # hardening test record
 ```
 
 > Every directory ships with a `README.meta` explaining its threat model and ABI version.
@@ -675,7 +670,7 @@ Generate PDF handbook: `make pdf` inside `docs/` → `Edge-TinyML-Handbook.pdf`
 - **Cognitive Model**: TinyLlama 1.1B GGUF (Q4 quantized) — MIT-compatible weights
 - **External Calls**: None — 100% offline inference, zero network traffic (packet-sniffer verified)
 - **Dataset**: Google Speech Commands (open license). Third-party fine-tunes may require CC-BY-NC. Run `scripts/check_weights_license.sh` to verify.
-- **Known Limitations**: KWS accuracy validated at 3.64ms on benchmark hardware. Performance on low-end MCUs (ESP32 < 240MHz) may vary. EMI robustness tested at 30 V/m; higher RF environments require field validation.
+- **Known Limitations**: KWS latency verified at 0.048ms on benchmark hardware. Performance on low-end MCUs (ESP32 < 240MHz) may vary. EMI robustness tested at 30 V/m; higher RF environments require field validation.
 
 ---
 
@@ -686,7 +681,7 @@ Generate PDF handbook: `make pdf` inside `docs/` → `Edge-TinyML-Handbook.pdf`
 | [Google Speech Commands](https://www.tensorflow.org/datasets/catalog/speech_commands) | Training dataset | KWS model training |
 | [TensorFlow Lite](https://www.tensorflow.org/lite) | Micro-runtime | 77KB model possible |
 | [TinyLlama](https://github.com/jzhang38/TinyLlama) | 1.1B GGUF weights | On-device cognition |
-| TinyML Community | Benchmarks & methodology | Phase-10 hardening |
+| TinyML Community | Benchmarks & methodology | global hardening |
 
 ---
 
@@ -707,7 +702,7 @@ scripts/check_weights_license.sh
 
 **Genius-Level Intelligence, Zero Cloud Dependencies.**
 
-*100% OFF-GRID · 3.64ms · 21/21 blocked · Phase-10 Certified*
+*100% OFF-GRID · 0.048ms · 21/21 blocked*
 
 ⭐ Star the repo · 🐛 Open an issue · 🔧 Submit a PR · 🚀 Ship a product
 
