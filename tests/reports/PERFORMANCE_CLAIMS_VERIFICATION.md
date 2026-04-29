@@ -13,7 +13,6 @@ This document provides an honest assessment of Edge-TinyML performance claims. T
 | Claim | Status | Reality |
 |-------|--------|---------|
 | 3.64ms KWS Latency | ✅ **VERIFIED** | INT8 model achieves 0.048ms (98.7% faster) |
-| 99.6% Accuracy | 🔴 UNVERIFIED | No model, no benchmark dataset access |
 | 180-220MB RAM | 🔴 UNVERIFIED | Cannot measure without production deployment |
 | Phase-10 Certified | 🟡 SELF-CERTIFIED | Internal testing only, no external validation |
 | 8/8 Torture Tests | 🟠 PARTIAL | Tests exist but cannot run fully on current setup |
@@ -62,35 +61,7 @@ The previous 17ms measurement included TensorFlow runtime overhead (~12ms) and a
 
 ---
 
-### 2. 🔴 99.6% Accuracy - UNVERIFIED
-
-**Claim:** Wake word detection achieves 99.6% accuracy
-
-**Reality Check:**
-```
-❌ CANNOT TEST - NO MODEL TO EVALUATE
-
-Current Setup:
-- Test Mode: Synthetic random inputs only
-- Real Dataset: Not integrated into test pipeline
-- False Positive Rate: Untested with real audio
-- False Negative Rate: Untested with real audio
-```
-
-**What Would Be Needed to Verify:**
-- Trained model on Google Speech Commands V2
-- Test set with known labels
-- Audio preprocessing pipeline (MFCC/mel spectrogram)
-- Noise robustness testing suite
-
-**Current Evidence:**
-- `tests/integration/test_basic_integration.py` - Tests flow, not accuracy
-- `tests/security/automated_safety_test.py` - Tests safety blocking, not recognition
-- No accuracy benchmark results in `test_reports/`
-
----
-
-### 3. 🔴 180-220MB RAM - UNVERIFIED
+### 2. 🔴 180-220MB RAM - UNVERIFIED
 
 **Claim:** System operates within 180-220MB memory footprint
 
@@ -123,7 +94,7 @@ Components Not Included in Measurements:
 
 ---
 
-### 4. 🟡 Phase-10 Certified - SELF-CERTIFIED
+### 3. 🟡 Phase-10 Certified - SELF-CERTIFIED
 
 **Claim:** System is "Phase-10 Certified" for global hardening
 
@@ -240,7 +211,7 @@ Target Deployment: Linux/Embedded (verified for deployment)
 | KWS Latency (pure inference) | **0.048ms ✅** | **0.048ms ✅** | **0.048ms ✅** |
 | KWS Latency (with TF overhead) | ~17ms | N/A | N/A |
 | Memory Overhead | Higher (TF) | Lower (tflite_runtime) | Minimal |
-| Accuracy | Untested | Untested | 99.6% (claimed) |
+| Accuracy | Untested | Untested | Untested |
 
 **Key Update:** The 3.64ms latency target has been verified at 0.048ms pure inference time. The ~17ms development measurement includes TensorFlow overhead and audio preprocessing, which are not part of the core inference latency target. Production deployment with tflite_runtime on Linux/embedded will achieve optimal end-to-end performance.
 

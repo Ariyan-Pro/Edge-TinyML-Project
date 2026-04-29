@@ -29,7 +29,7 @@ Edge-TinyML is a palm-sized, fully offline voice assistant engineered to militar
 
 ### ⚠️ Performance Claim Transparency
 
-**Important:** Several performance claims in this document (3.64ms latency, 99.6% accuracy, 180-220MB RAM) are **target specifications** that require production hardware and models to verify. Current development measurements show ~17ms latency on Windows with TensorFlow backend. See [`tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md`](./tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md) for complete reality check.
+**Important:** Several performance claims in this document (3.64ms latency, 180-220MB RAM) are **target specifications** that require production hardware and models to verify. Current development measurements show ~17ms latency on Windows with TensorFlow backend. See [`tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md`](./tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md) for complete reality check.
 
 The architecture supports:
 - **KWS Engine**: Target 77 KB model with sub-5ms inference (production TFLite INT8)
@@ -65,7 +65,7 @@ The architecture supports:
 |:-------|:-------|:--------------|:---------------------|:-------|
 | **KWS Latency** | ≤ 5ms | **0.048ms verified** (Windows/TF) | 3.64ms (TFLite INT8) | ✅ VERIFIED |
 | **RAM Footprint** | < 500MB | **42MB** (partial) | 180–220MB (full system) | 🔴 Unverified |
-| **Accuracy** | ≥ 90% | **Untested** | 99.6% | 🔴 Unverified |
+| **Accuracy** | ≥ 90% | **Untested** | N/A | 🔴 Removed |
 | **Safety (command shield)** | 100% | **100%** | **100%** | ✅ Verified |
 | **Torture Tests** | 8/8 | **6/8** implemented | 8/8 passed | 🟠 Partial |
 
@@ -363,7 +363,7 @@ import numpy as np
 dimensions = ['Latency\n(inverse)', 'Accuracy', 'Privacy', 'Security\nBlock Rate',
               'RAM\nEfficiency', 'Deployment\nFlexibility']
 
-edge_tinyml = [100, 99.6, 100, 100, 88, 95]    # inverted latency: 100 = best
+edge_tinyml = [100, 0, 100, 100, 88, 95]    # inverted latency: 100 = best (accuracy removed)
 alexa        = [20,  95,   0,  50,  50, 30]
 snowboy      = [60,  90,   85, 60,  70, 50]
 porcupine    = [50,  92,   90, 65,  75, 55]
@@ -585,12 +585,12 @@ Invoke-Item tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md
 
 <div align="center">
 
-| System | Latency | Privacy | Accuracy | Deployment |
-|:-------|:--------|:--------|:---------|:-----------|
-| **Edge-TinyML** | **3.64ms** | **100% offline** | **99.6%** | MCU → Desktop → Server |
-| Alexa | 200–500ms | Cloud-only | ~95% | Cloud |
-| Snowboy | 10–20ms | Offline | ~90% | Embedded |
-| Porcupine | 15–30ms | Offline | ~92% | Embedded |
+| System | Latency | Privacy | Deployment |
+|:-------|:--------|:--------|:-----------|
+| **Edge-TinyML** | **3.64ms** | **100% offline** | MCU → Desktop → Server |
+| Alexa | 200–500ms | Cloud-only | Cloud |
+| Snowboy | 10–20ms | Offline | Embedded |
+| Porcupine | 15–30ms | Offline | Embedded |
 
 </div>
 
@@ -683,7 +683,7 @@ Generate PDF handbook: `make pdf` inside `docs/` → `Edge-TinyML-Handbook.pdf`
 
 | Partner | Contribution | Impact |
 |:--------|:------------|:-------|
-| [Google Speech Commands](https://www.tensorflow.org/datasets/catalog/speech_commands) | Training dataset | 99.6% KWS accuracy |
+| [Google Speech Commands](https://www.tensorflow.org/datasets/catalog/speech_commands) | Training dataset | KWS model training |
 | [TensorFlow Lite](https://www.tensorflow.org/lite) | Micro-runtime | 77KB model possible |
 | [TinyLlama](https://github.com/jzhang38/TinyLlama) | 1.1B GGUF weights | On-device cognition |
 | TinyML Community | Benchmarks & methodology | Phase-10 hardening |
@@ -707,7 +707,7 @@ scripts/check_weights_license.sh
 
 **Genius-Level Intelligence, Zero Cloud Dependencies.**
 
-*100% OFF-GRID · 3.64ms · 99.6% · 21/21 blocked · Phase-10 Certified*
+*100% OFF-GRID · 3.64ms · 21/21 blocked · Phase-10 Certified*
 
 ⭐ Star the repo · 🐛 Open an issue · 🔧 Submit a PR · 🚀 Ship a product
 
