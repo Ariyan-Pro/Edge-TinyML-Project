@@ -13,22 +13,23 @@ env/
 .env.local
 .env.*
 
+# Tests
+.pytest_cache/
+.coverage
+coverage/
+
 # Logs
 *.log
 
-# Coverage
-.coverage
-coverage/
-htmlcov/
-
-# IDE
-.vscode/
-.idea/
+# Temporary files
+*.tmp
 *.swp
 *.swo
-*.tmp
 
 # OS
 .DS_Store
 Thumbs.db
+
+# Database (if not intended to be tracked)
+*.db
 ```

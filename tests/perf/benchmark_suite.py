@@ -10,6 +10,7 @@ import time
 import tracemalloc
 import statistics
 import json
+import numpy as np
 from pathlib import Path
 from datetime import datetime
 
@@ -360,7 +361,6 @@ def save_results(results, output_file="BENCHMARK_RESULTS.md"):
 
 
 if __name__ == "__main__":
-    import numpy as np
     
     # Run benchmarks
     results = run_benchmark_suite(iterations=1000, verbose=True)

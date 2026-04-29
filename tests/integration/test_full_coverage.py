@@ -2,14 +2,15 @@ import pytest
 import sys
 import os
 sys.path.append('phase3_automation_phase4_cognitive/scripts')
+sys.path.append('phase3_automation_phase4_cognitive/scripts/ai_core')
 
 from automation_core import automation_engine
-from memory_manager import init_db, log_command
+from memory_manager import MemoryManager
 
 class TestIntegrationCoverage:
     def setup_method(self):
         os.environ['EDGE_ALLOW_DESTRUCTIVE'] = '0'
-        init_db()
+        self.memory = MemoryManager()
     
     def test_all_command_phrases(self):
         """Test all 12 automation commands"""
