@@ -10,10 +10,13 @@ import time
 import tracemalloc
 import statistics
 import json
+import numpy as np
 from pathlib import Path
 from datetime import datetime
 
-# Add parent directory to path
+# Add project root to path for proper imports
+project_root = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(project_root))
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 def run_benchmark_suite(iterations=1000, verbose=True):
@@ -360,7 +363,6 @@ def save_results(results, output_file="BENCHMARK_RESULTS.md"):
 
 
 if __name__ == "__main__":
-    import numpy as np
     
     # Run benchmarks
     results = run_benchmark_suite(iterations=1000, verbose=True)
