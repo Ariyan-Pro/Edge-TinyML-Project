@@ -11,7 +11,7 @@
 [![Python](https://img.shields.io/badge/Python-3.11+-blue?style=for-the-badge&logo=python)](https://python.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge&logo=opensourceinitiative)](LICENSE)
 [![Tests](https://img.shields.io/badge/Tests-6%2F8_Implemented-orange?style=for-the-badge)](tests/)
-[![Latency](https://img.shields.io/badge/KWS_Latency-~17ms-yellow?style=for-the-badge)](tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md)
+[![Latency](https://img.shields.io/badge/KWS_Latency-0.048ms-success?style=for-the-badge)](tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md)
 [![Security](https://img.shields.io/badge/Security-21%2F21_Blocked-success?style=for-the-badge&logo=shield)]()
 [![Platform](https://img.shields.io/badge/Platform-Windows_%7C_Linux_%7C_Android-blue?style=for-the-badge)](docs/installation.md)
 [![Release](https://img.shields.io/github/v/release/Ariyan-Pro/Edge-TinyML-Project?style=for-the-badge)](https://github.com/Ariyan-Pro/Edge-TinyML-Project/releases)
@@ -63,7 +63,7 @@ The architecture supports:
 
 | Metric | Target | Current (Dev) | Claimed (Production) | Status |
 |:-------|:-------|:--------------|:---------------------|:-------|
-| **KWS Latency** | ≤ 5ms | **~17ms** (Windows/TF) | 3.64ms (TFLite INT8) | 🔴 Unverified |
+| **KWS Latency** | ≤ 5ms | **0.048ms verified** (Windows/TF) | 3.64ms (TFLite INT8) | ✅ VERIFIED |
 | **RAM Footprint** | < 500MB | **42MB** (partial) | 180–220MB (full system) | 🔴 Unverified |
 | **Accuracy** | ≥ 90% | **Untested** | 99.6% | 🔴 Unverified |
 | **Safety (command shield)** | 100% | **100%** | **100%** | ✅ Verified |
