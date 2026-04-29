@@ -134,6 +134,7 @@ class WakeWordDetector:
             return None
     
     def predict_audio(self, audio):
+        """Predict wake word from audio data"""
         try:
             features = self.audio_to_melspectrogram(audio)
             if features is None:
@@ -166,6 +167,57 @@ class WakeWordDetector:
             
         except Exception as e:
             print(f"Prediction error: {e}")
+            return None, 0.0, 0.0
+    
+    def detect_wake_word(self, mel_spectrogram=None):
+        """Detect wake word from pre-computed mel spectrogram or random input for benchmarking
+        
+        Args:
+            mel_spectrogram: Optional mel spectrogram array of shape (40, 99) or (1, 40, 99, 1)
+                            If None, generates random input for benchmarking
+            
+        Returns:
+            tuple: (predicted_class, confidence, inference_time_ms)
+        """
+        try:
+            # If no input provided, generate random input for benchmarking
+            if mel_spectrogram is None:
+                mel_spectrogram = np.random.randn(1, 40, 99, 1).astype(np.float32)
+            else:
+                # Ensure correct shape
+                if len(mel_spectrogram.shape) == 2:
+                    mel_spectrogram = np.expand_dims(mel_spectrogram, axis=0)
+                    mel_spectrogram = np.expand_dims(mel_spectrogram, axis=-1)
+                elif len(mel_spectrogram.shape) == 3:
+                    mel_spectrogram = np.expand_dims(mel_spectrogram, axis=-1)
+            
+            input_data = mel_spectrogram.astype(np.float32)
+            
+            # Handle quantization if needed
+            if self.input_details[0]['dtype'] == np.uint8:
+                input_scale, input_zero_point = self.input_details[0]['quantization']
+                input_data = input_data / input_scale + input_zero_point
+                input_data = input_data.astype(np.uint8)
+            
+            self.interpreter.set_tensor(self.input_details[0]['index'], input_data)
+            
+            start_time = time.time()
+            self.interpreter.invoke()
+            inference_time = (time.time() - start_time) * 1000
+            
+            output = self.interpreter.get_tensor(self.output_details[0]['index'])
+            
+            if self.output_details[0]['dtype'] == np.uint8:
+                output_scale, output_zero_point = self.output_details[0]['quantization']
+                output = (output.astype(np.float32) - output_zero_point) * output_scale
+            
+            predicted_class = np.argmax(output[0])
+            confidence = np.max(output[0])
+            
+            return predicted_class, confidence, inference_time
+            
+        except Exception as e:
+            print(f"Wake word detection error: {e}")
             return None, 0.0, 0.0
     
     def audio_callback(self, indata, frames, time, status):

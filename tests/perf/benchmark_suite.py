@@ -14,7 +14,9 @@ import numpy as np
 from pathlib import Path
 from datetime import datetime
 
-# Add parent directory to path
+# Add project root to path for proper imports
+project_root = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(project_root))
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 def run_benchmark_suite(iterations=1000, verbose=True):

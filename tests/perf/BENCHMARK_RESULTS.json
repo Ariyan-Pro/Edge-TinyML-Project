@@ -1,0 +1,42 @@
+{
+  "timestamp": "2026-04-29T11:48:26.632380",
+  "backend": "tensorflow",
+  "iterations": 1000,
+  "latency": {
+    "average_ms": 0.613,
+    "median_ms": 0.263,
+    "p50_ms": 0.263,
+    "p95_ms": 0.563,
+    "p99_ms": 11.106,
+    "min_ms": 0.228,
+    "max_ms": 16.903,
+    "std_dev_ms": 1.868,
+    "total_time_s": 0.978,
+    "throughput_ops_per_s": 1022.21
+  },
+  "memory": {
+    "peak_mb": 0.1,
+    "current_mb": 0.05,
+    "claim_min_mb": 180,
+    "claim_max_mb": 220,
+    "status": "PASS"
+  },
+  "accuracy": {
+    "valid_outputs": 100,
+    "invalid_outputs": 0,
+    "consistency_rate_percent": 100.0,
+    "claim_accuracy": 99.6,
+    "status": "PASS"
+  },
+  "stability": {
+    "threads": 10,
+    "total_operations": 200,
+    "successful_operations": 200,
+    "failed_operations": 0,
+    "success_rate_percent": 100.0,
+    "duration_seconds": 0.198,
+    "deadlock_detected": false,
+    "status": "PASS"
+  },
+  "overall_status": "PARTIAL"
+}

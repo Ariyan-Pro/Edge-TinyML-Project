@@ -5,31 +5,16 @@ __pycache__/
 *.pyo
 *.pyd
 
-# Dependencies
-.venv/
-venv/
-env/
+# Logs and temp files
+*.log
+*.tmp
+
+# Environment
 .env
 .env.local
-.env.*
+*.env.*
 
 # Tests
+.tests/
 .pytest_cache/
-.coverage
-coverage/
-
-# Logs
-*.log
-
-# Temporary files
-*.tmp
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Database (if not intended to be tracked)
-*.db
 ```
