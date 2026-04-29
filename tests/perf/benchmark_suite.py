@@ -165,14 +165,12 @@ def run_benchmark_suite(iterations=1000, verbose=True):
         "valid_outputs": valid_outputs,
         "invalid_outputs": invalid_outputs,
         "consistency_rate_percent": round(consistency_rate, 2),
-        "claim_accuracy": 99.6,
         "status": "PASS" if consistency_rate >= 99.0 else "FAIL"
     }
     
     if verbose:
         print(f"   Valid Outputs:   {valid_outputs}/100")
         print(f"   Consistency:     {consistency_rate:.2f}%")
-        print(f"   Claim:           99.6%")
         print(f"   Status:          {'✅ PASS' if consistency_rate >= 99.0 else '❌ FAIL'}")
     
     # ========================================
@@ -264,7 +262,7 @@ def run_benchmark_suite(iterations=1000, verbose=True):
     print(f"Backend:           {backend.upper()}")
     print(f"Latency (P99):     {results['latency']['p99_ms']:.3f} ms (Claim: ~{latency_claim} ms)")
     print(f"Memory (Peak):     {results['memory']['peak_mb']:.2f} MB (Claim: 180-220 MB)")
-    print(f"Accuracy:          {results['accuracy']['consistency_rate_percent']:.2f}% (Claim: 99.6%)")
+    print(f"Accuracy:          {results['accuracy']['consistency_rate_percent']:.2f}%")
     print(f"Stability:         {results['stability']['success_rate_percent']:.2f}% success")
     print()
     print(f"OVERALL STATUS:    {'✅ ALL CLAIMS VERIFIED' if all_passed and latency_pass else '⚠️  PARTIALLY VERIFIED'}")
@@ -308,10 +306,10 @@ def save_results(results, output_file="BENCHMARK_RESULTS.md"):
 | Current RAM | {results['memory']['current_mb']} | - | - |
 
 ### 🎯 Accuracy & Consistency
-| Metric | Value | Claim | Status |
-|--------|-------|-------|--------|
-| Valid Outputs | {results['accuracy']['valid_outputs']}/100 | 99/100 | {'✅ PASS' if results['accuracy']['status'] == 'PASS' else '❌ FAIL'} |
-| Consistency Rate | {results['accuracy']['consistency_rate_percent']}% | 99.6% | {'✅ PASS' if results['accuracy']['status'] == 'PASS' else '❌ FAIL'} |
+| Metric | Value | Status |
+|--------|-------|--------|
+| Valid Outputs | {results['accuracy']['valid_outputs']}/100 | {'✅ PASS' if results['accuracy']['status'] == 'PASS' else '❌ FAIL'} |
+| Consistency Rate | {results['accuracy']['consistency_rate_percent']}% | {'✅ PASS' if results['accuracy']['status'] == 'PASS' else '❌ FAIL'} |
 
 ### 🔒 Stability (Concurrent Load)
 | Metric | Value | Status |

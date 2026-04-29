@@ -1,3 +1,4 @@
+```
 # Logs and temp files
 *.log
 *.tmp
@@ -6,16 +7,78 @@
 # Environment
 .env
 .env.local
-*.env.*
+.env.*
 
 # Editors
 .vscode/
 .idea/
 
-# Coverage reports
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+python/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git/modules/
+.DS_Store
+*.swp
+*~
+.pytest_cache/
+.mypy_cache/
+.hypothesis/
+
+# Build directories
+build/
+dist/
+*.egg
+*.egg-info/
+.eggs/
+.installed.cfg
+*.egg-info/
+.eggs/
+.installed.cfg
+develop-eggs/
+parts/
+.sconsign.dblite
+.wafpickle-*
 coverage/
 htmlcov/
-.coverage
+cover/
+*.out
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.a
+*.dylib
 
-# Test reports
-tests/reports/
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+.ENV/
+env.bak/
+.venv.bak/
+
+# Testing
+.tests/
+test/
+tests/
+
+# Performance reports
+tests/reports/*.json
+tests/reports/*.md
+```
