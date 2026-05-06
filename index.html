@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edge-TinyML v1.0 — Military-Grade Offline Voice Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-tertiary: #111111;
+            --glass-bg: rgba(20, 20, 20, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --text-muted: #666666;
+            --accent-gold: #ffd700;
+            --accent-blue: #58a6ff;
+            --accent-green: #28a745;
+            --accent-red: #dc3545;
+            --accent-purple: #6f42c1;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-blue));
+            z-index: 10000;
+            transition: width 0.1s ease;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 9999;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-gold);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 8rem 2rem 4rem;
+            background: radial-gradient(ellipse at center, #111111 0%, #000000 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.05) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        .hero-badge {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--accent-gold);
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #888888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 3rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 3rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator svg {
+            width: 30px;
+            height: 30px;
+            stroke: var(--text-muted);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        /* BentoGrid Section */
+        .bento-section {
+            padding: 6rem 2rem;
+            background: var(--bg-primary);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .bento-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .bento-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .bento-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .bento-card.large {
+            grid-column: span 2;
+        }
+
+        .bento-card.tall {
+            grid-row: span 2;
+        }
+
+        @media (max-width: 768px) {
+            .bento-card.large {
+                grid-column: span 1;
+            }
+            .bento-card.tall {
+                grid-row: span 1;
+            }
+        }
+
+        .bento-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .bento-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .bento-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .bento-metric {
+            display: inline-block;
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--accent-gold);
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        /* Architecture Section */
+        .architecture {
+            padding: 6rem 2rem;
+            background: var(--bg-secondary);
+        }
+
+        .pipeline-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .pipeline-stage {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .pipeline-stage.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .pipeline-stage:nth-child(even) {
+            transform: translateX(50px);
+        }
+
+        .stage-number {
+            font-size: 4rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.05);
+            line-height: 1;
+        }
+
+        .stage-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .stage-tag {
+            background: var(--accent-gold);
+            color: #000;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .stage-content p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .stage-specs {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .spec-item {
+            background: var(--bg-tertiary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .spec-item strong {
+            color: var(--text-primary);
+        }
+
+        /* Comparison Table */
+        .comparison {
+            padding: 6rem 2rem;
+            background: var(--bg-primary);
+        }
+
+        .table-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            overflow-x: auto;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .comparison-table th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .comparison-table td {
+            color: var(--text-primary);
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .check { color: var(--accent-green); }
+        .cross { color: var(--accent-red); }
+        .partial { color: var(--accent-gold); }
+
+        /* Security Section */
+        .security {
+            padding: 6rem 2rem;
+            background: var(--bg-secondary);
+        }
+
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .security-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .security-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .security-card:hover {
+            border-color: var(--accent-green);
+            transform: translateY(-5px);
+        }
+
+        .security-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .security-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .shield-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(40, 167, 69, 0.1);
+            color: var(--accent-green);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        /* Use Cases */
+        .use-cases {
+            padding: 6rem 2rem;
+            background: var(--bg-primary);
+        }
+
+        .use-case-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .use-case-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            backdrop-filter: blur(20px);
+            opacity: 0;
+            transform: scale(0.95);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .use-case-card.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .use-case-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .use-case-card ul {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .use-case-card li {
+            color: var(--text-secondary);
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .use-case-card li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--accent-gold);
+        }
+
+        .kpi-badge {
+            background: linear-gradient(135deg, var(--accent-gold), #b8860b);
+            color: #000;
+            padding: 0.75rem 1.25rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: inline-block;
+        }
+
+        /* Quick Start */
+        .quick-start {
+            padding: 6rem 2rem;
+            background: var(--bg-secondary);
+        }
+
+        .code-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+
+        .code-header {
+            background: var(--bg-tertiary);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .code-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--text-muted);
+        }
+
+        .code-dot:nth-child(1) { background: var(--accent-red); }
+        .code-dot:nth-child(2) { background: var(--accent-gold); }
+        .code-dot:nth-child(3) { background: var(--accent-green); }
+
+        .code-block {
+            padding: 2rem;
+            overflow-x: auto;
+        }
+
+        .code-block pre {
+            margin: 0;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        .code-block code {
+            color: var(--text-secondary);
+        }
+
+        .code-keyword { color: var(--accent-blue); }
+        .code-string { color: var(--accent-green); }
+        .code-comment { color: var(--text-muted); }
+        .code-function { color: var(--accent-purple); }
+
+        /* Documentation Links */
+        .docs-section {
+            padding: 6rem 2rem;
+            background: var(--bg-primary);
+        }
+
+        .docs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .doc-link {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .doc-link:hover {
+            border-color: var(--accent-gold);
+            transform: translateY(-3px);
+        }
+
+        .doc-link h4 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .doc-link p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem 2rem;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-gold);
+        }
+
+        .footer-badges {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .badge {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .footer-copy {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Mouse Parallax Effect */
+        .parallax-layer {
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .mouse-follower {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.03) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero-stats {
+                gap: 2rem;
+            }
+
+            .stat-value {
+                font-size: 2rem;
+            }
+
+            .pipeline-stage {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .stage-number {
+                font-size: 3rem;
+            }
+
+            .stage-specs {
+                justify-content: center;
+            }
+        }
+
+        /* Loading Animation */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100000;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-content {
+            text-align: center;
+        }
+
+        .loader-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid var(--glass-border);
+            border-top-color: var(--accent-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loader-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loader" id="loader">
+        <div class="loader-content">
+            <div class="loader-spinner"></div>
+            <div class="loader-text">Initializing Edge-TinyML</div>
+        </div>
+    </div>
+
+    <!-- Scroll Progress -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Mouse Follower -->
+    <div class="mouse-follower" id="mouseFollower"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="#" class="nav-logo">Edge-TinyML v1.0</a>
+        <ul class="nav-links">
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#architecture">Architecture</a></li>
+            <li><a href="#comparison">Comparison</a></li>
+            <li><a href="#security">Security</a></li>
+            <li><a href="#quickstart">Quick Start</a></li>
+            <li><a href="#docs">Docs</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="overview">
+        <div class="hero-badge">Military-Grade OFFLINE Voice Assistant</div>
+        <h1>Edge-TinyML v1.0</h1>
+        <p class="hero-subtitle">100% OFF-GRID · Zero Cloud · Zero Telemetry · Zero Compromises</p>
+        
+        <div class="hero-stats">
+            <div class="stat-item">
+                <div class="stat-value">~17ms</div>
+                <div class="stat-label">KWS Latency</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">42MB</div>
+                <div class="stat-label">RAM Footprint</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">21/21</div>
+                <div class="stat-label">Attacks Blocked</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">100%</div>
+                <div class="stat-label">Offline</div>
+            </div>
+        </div>
+
+        <div class="scroll-indicator">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 5v14M19 12l-7 7-7-7"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- BentoGrid Features Section -->
+    <section class="bento-section">
+        <div class="section-header">
+            <h2 class="section-title">Core Capabilities</h2>
+            <p class="section-subtitle">Engineered for military-grade robustness and privacy standards</p>
+        </div>
+
+        <div class="bento-grid">
+            <div class="bento-card large visible">
+                <div class="bento-icon">⚡</div>
+                <h3>Ultra-Low Latency KWS Engine</h3>
+                <p>Keyword spotting engine with sub-20ms latency using a 77KB quantized model. Trained on Google Speech Commands dataset with TensorFlow Lite Micro runtime.</p>
+                <span class="bento-metric">~17ms Measured</span>
+            </div>
+
+            <div class="bento-card tall">
+                <div class="bento-icon">🧠</div>
+                <h3>5-Layer Strategic Intelligence</h3>
+                <p>Connects KWS to cognitive core through intent classification, context vector cache, emotion detection, memory retrieval, and command routing.</p>
+                <span class="bento-metric">5 Intelligence Layers</span>
+            </div>
+
+            <div class="bento-card">
+                <div class="bento-icon">💡</div>
+                <h3>Cognitive LLM Core</h3>
+                <p>TinyLlama 1.1B GGUF quantized model for complex command processing. Fully on-device inference with no cloud dependencies.</p>
+                <span class="bento-metric">1.1B Parameters</span>
+            </div>
+
+            <div class="bento-card">
+                <div class="bento-icon">🔒</div>
+                <h3>AES-256 Data Vault</h3>
+                <p>All conversation history and sensitive configuration encrypted at rest with military-grade AES-256 encryption.</p>
+                <span class="bento-metric">AES-256 Encrypted</span>
+            </div>
+
+            <div class="bento-card">
+                <div class="bento-icon">🎤</div>
+                <h3>Virtual-Mic Attack Defense</h3>
+                <p>Detects and blocks software-injected audio streams attempting to spoof wake-word activation.</p>
+                <span class="bento-metric">Active Defense</span>
+            </div>
+
+            <div class="bento-card large">
+                <div class="bento-icon">🖥️</div>
+                <h3>Multi-Platform Deployment</h3>
+                <p>Deploy from embedded MCU (ESP32, Raspberry Pi ≤3W) to Windows enterprise servers (PID 4512 with triple auto-restart) to Android via Termux.</p>
+                <span class="bento-metric">MCU → Desktop → Server</span>
+            </div>
+
+            <div class="bento-card">
+                <div class="bento-icon">📊</div>
+                <h3>Self-Optimizing Core</h3>
+                <p>Auto-tuner and memory sentinel with configurable 0.9GB memory ceiling. Resource-aware model switching.</p>
+                <span class="bento-metric">0.9GB Ceiling</span>
+            </div>
+
+            <div class="bento-card">
+                <div class="bento-icon">🔄</div>
+                <h3>Enterprise Service Hardening</h3>
+                <p>Runs as PID 4512 with triple auto-restart on 30-second cadence. Service death does not equal assistant death.</p>
+                <span class="bento-metric">99.98% Uptime</span>
+            </div>
+
+            <div class="bento-card">
+                <div class="bento-icon">📡</div>
+                <h3>Zero Exfiltration Guarantee</h3>
+                <p>Verified via packet sniffer. No data leaves the device under any operational condition.</p>
+                <span class="bento-metric">0% Data Leakage</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Pipeline Section -->
+    <section class="architecture" id="architecture">
+        <div class="section-header">
+            <h2 class="section-title">Three-Stage Inference Pipeline</h2>
+            <p class="section-subtitle">Genius-level hybrid architecture from wake word to cognitive response</p>
+        </div>
+
+        <div class="pipeline-container">
+            <div class="pipeline-stage">
+                <div class="stage-number">01</div>
+                <div class="stage-content">
+                    <h3>KWS Stage <span class="stage-tag">77 KB</span></h3>
+                    <p>Microphone input processed through keyword spotting model with confidence threshold filtering. Sleep mode activated when below threshold.</p>
+                    <div class="stage-specs">
+                        <span class="spec-item"><strong>Latency:</strong> ~17ms</span>
+                        <span class="spec-item"><strong>Model:</strong> TFLite Micro</span>
+                        <span class="spec-item"><strong>Threshold:</strong> 0.55–0.70</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pipeline-stage">
+                <div class="stage-number">02</div>
+                <div class="stage-content">
+                    <h3>Strategic Intelligence <span class="stage-tag">5-Layer</span></h3>
+                    <p>Five-layer intelligence pipeline connecting KWS to cognitive core: Intent Classification → Context Vector Cache → Emotion Detection → Memory Retrieval → Command Routing.</p>
+                    <div class="stage-specs">
+                        <span class="spec-item"><strong>Layer 1:</strong> Intent</span>
+                        <span class="spec-item"><strong>Layer 2:</strong> Context</span>
+                        <span class="spec-item"><strong>Layer 3:</strong> Emotion</span>
+                        <span class="spec-item"><strong>Layer 4:</strong> Memory</span>
+                        <span class="spec-item"><strong>Layer 5:</strong> Routing</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pipeline-stage">
+                <div class="stage-number">03</div>
+                <div class="stage-content">
+                    <h3>Cognitive LLM <span class="stage-tag">1.1B GGUF</span></h3>
+                    <p>TinyLlama 1.1B GGUF quantized model processes routed commands and generates responses entirely on-device.</p>
+                    <div class="stage-specs">
+                        <span class="spec-item"><strong>Model:</strong> TinyLlama</span>
+                        <span class="spec-item"><strong>Size:</strong> 1.1B Params</span>
+                        <span class="spec-item"><strong>Format:</strong> Q4 Quantized</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section class="comparison" id="comparison">
+        <div class="section-header">
+            <h2 class="section-title">Competitive Benchmark</h2>
+            <p class="section-subtitle">How Edge-TinyML compares to industry leaders</p>
+        </div>
+
+        <div class="table-container">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Capability</th>
+                        <th>Edge-TinyML</th>
+                        <th>Alexa / Google</th>
+                        <th>Other OSS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Privacy</td>
+                        <td><span class="check">✓ 100% offline</span></td>
+                        <td><span class="cross">✗ Cloud-only</span></td>
+                        <td><span class="partial">⚠ Mixed</span></td>
+                    </tr>
+                    <tr>
+                        <td>Latency</td>
+                        <td><span class="check">✓ ~17ms KWS</span></td>
+                        <td><span class="partial">⚠ 200–500ms</span></td>
+                        <td><span class="partial">⚠ 10–50ms</span></td>
+                    </tr>
+                    <tr>
+                        <td>Security</td>
+                        <td><span class="check">✓ 21/21 blocked</span></td>
+                        <td><span class="partial">⚠ Undisclosed</span></td>
+                        <td><span class="partial">⚠ Varies</span></td>
+                    </tr>
+                    <tr>
+                        <td>Deployment</td>
+                        <td><span class="check">✓ MCU → Desktop → Server</span></td>
+                        <td><span class="cross">✗ Cloud tethered</span></td>
+                        <td><span class="partial">⚠ Embedded only</span></td>
+                    </tr>
+                    <tr>
+                        <td>Cost</td>
+                        <td><span class="check">✓ Free & Open Source</span></td>
+                        <td><span class="cross">✗ Subscription</span></td>
+                        <td><span class="partial">⚠ Varies</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Security Section -->
+    <section class="security" id="security">
+        <div class="section-header">
+            <h2 class="section-title">Security Hardening</h2>
+            <p class="section-subtitle">Tested to destruction, proven in silence</p>
+        </div>
+
+        <div class="security-grid">
+            <div class="security-card">
+                <h4><span class="check">✓</span> Destructive-Command Shield</h4>
+                <p>100% block rate on all 21 tested destructive payloads. No shell injection, file deletion, or privilege escalation makes it through.</p>
+                <div class="shield-badge">21/21 BLOCKED</div>
+            </div>
+
+            <div class="security-card">
+                <h4><span class="check">✓</span> Virtual-Microphone Attack Defense</h4>
+                <p>Detects and blocks software-injected audio streams that attempt to spoof wake-word activation.</p>
+                <div class="shield-badge">ACTIVE DEFENSE</div>
+            </div>
+
+            <div class="security-card">
+                <h4><span class="check">✓</span> Sensitive-Directory Lockdown</h4>
+                <p>SSH keys, Documents, and Downloads directories are read-protected at the service layer. Traversal attempts logged and blocked.</p>
+                <div class="shield-badge">READ-PROTECTED</div>
+            </div>
+
+            <div class="security-card">
+                <h4><span class="check">✓</span> Zero Exfiltration Guarantee</h4>
+                <p>Verified via packet sniffer. No data leaves the device under any operational condition.</p>
+                <div class="shield-badge">PACKET VERIFIED</div>
+            </div>
+
+            <div class="security-card">
+                <h4><span class="check">✓</span> Enterprise Service Hardening</h4>
+                <p>Runs as PID 4512 with triple auto-restart on 30-second cadence. Service death does not equal assistant death.</p>
+                <div class="shield-badge">99.98% UPTIME</div>
+            </div>
+
+            <div class="security-card">
+                <h4><span class="check">✓</span> AES-256 Data Vault</h4>
+                <p>All conversation history and sensitive config encrypted at rest with military-grade encryption.</p>
+                <div class="shield-badge">AES-256 ENCRYPTED</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases Section -->
+    <section class="use-cases">
+        <div class="section-header">
+            <h2 class="section-title">Mission-Critical Use Cases</h2>
+            <p class="section-subtitle">Deploy once, forget forever</p>
+        </div>
+
+        <div class="use-case-grid">
+            <div class="use-case-card">
+                <h3>Enterprise Desktop</h3>
+                <ul>
+                    <li>12 hardened OS-automation commands</li>
+                    <li>Windows service (PID 4512)</li>
+                    <li>Triple auto-restart (30s)</li>
+                    <li>Resource-aware model switching</li>
+                </ul>
+                <div class="kpi-badge">KPI: 99.98% Uptime</div>
+            </div>
+
+            <div class="use-case-card">
+                <h3>Privacy-First Edge AI</h3>
+                <ul>
+                    <li>Zero-cloud pipeline</li>
+                    <li>AES-256 data vault</li>
+                    <li>Raspberry Pi ≤3W footprint</li>
+                    <li>On-device wake-word trainer</li>
+                </ul>
+                <div class="kpi-badge">KPI: 0% Data Leakage</div>
+            </div>
+
+            <div class="use-case-card">
+                <h3>Autonomous Sys-Admin</h3>
+                <ul>
+                    <li>Self-optimising inference core</li>
+                    <li>0.9GB memory ceiling</li>
+                    <li>Hot-plug plugin ecosystem</li>
+                    <li>Cross-platform state sync</li>
+                </ul>
+                <div class="kpi-badge">KPI: ~17ms Latency</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Torture Tests Section -->
+    <section class="bento-section">
+        <div class="section-header">
+            <h2 class="section-title">Global Hardening Report</h2>
+            <p class="section-subtitle">CIS-style torture suite validation</p>
+        </div>
+
+        <div class="bento-grid">
+            <div class="bento-card">
+                <div class="bento-icon">🔥</div>
+                <h3>CPU Saturation</h3>
+                <p>100% load × 60 min stress test with zero latency spikes recorded during sustained operation.</p>
+                <span class="bento-metric">0 SPIKES</span>
+            </div>
+
+            <div class="bento-card">
+                <div class="bento-icon">💾</div>
+                <h3>Memory Starvation</h3>
+                <p>1GB free / 8GB total memory constraint testing with zero crashes or memory leaks detected.</p>
+                <span class="bento-metric">0 CRASHES</span>
+            </div>
+
+            <div class="bento-card">
+                <div class="bento-icon">🛡️</div>
+                <h3>Security Hammer</h3>
+                <p>21 destructive payloads tested with 100% block rate across all attack vectors.</p>
+                <span class="bento-metric">100% BLOCKED</span>
+            </div>
+
+            <div class="bento-card">
+                <div class="bento-icon">🌊</div>
+                <h3>Flood Attack</h3>
+                <p>25 req/s burst request flood testing with conservative thread count protection.</p>
+                <span class="bento-metric">TESTED</span>
+            </div>
+
+            <div class="bento-card">
+                <div class="bento-icon">⏰</div>
+                <h3>Time Warp</h3>
+                <p>4 clock-drift extreme scenarios tested with system time manipulation defense active.</p>
+                <span class="bento-metric">SYNC PRESERVED</span>
+            </div>
+
+            <div class="bento-card">
+                <div class="bento-icon">📁</div>
+                <h3>File Corruption</h3>
+                <p>Integrity verification system tested and validated against corruption attacks.</p>
+                <span class="bento-metric">VERIFIED</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start Section -->
+    <section class="quick-start" id="quickstart">
+        <div class="section-header">
+            <h2 class="section-title">Quick Start</h2>
+            <p class="section-subtitle">Get running in minutes</p>
+        </div>
+
+        <div class="code-container">
+            <div class="code-header">
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+                <div class="code-dot"></div>
+            </div>
+            <div class="code-block">
+                <pre><code><span class="code-comment"># Clone repository</span>
+<span class="code-keyword">git clone</span> https://github.com/Ariyan-Pro/Edge-TinyML-Project.git
+<span class="code-keyword">cd</span> Edge-TinyML-Project
+
+<span class="code-comment"># Create virtual environment</span>
+<span class="code-keyword">python</span> -m venv edge-tinyml-prod
+
+<span class="code-comment"># Activate (Windows PowerShell)</span>
+.\edge-tinyml-prod\Scripts\Activate.ps1
+
+<span class="code-comment"># Install dependencies</span>
+<span class="code-keyword">pip install</span> -r requirements.txt
+
+<span class="code-comment"># Verify system health</span>
+<span class="code-keyword">python</span> -c <span class="code-string">"from wake_word_detector import WakeWordDetector; print('Ready')"</span>
+
+<span class="code-comment"># Start listening (100% offline)</span>
+<span class="code-keyword">from</span> wake_word_detector <span class="code-keyword">import</span> WakeWordDetector
+detector = WakeWordDetector()
+detector.start_listening()
+<span class="code-comment"># Say "computer" to activate!</span></code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- Documentation Section -->
+    <section class="docs-section" id="docs">
+        <div class="section-header">
+            <h2 class="section-title">Documentation</h2>
+            <p class="section-subtitle">Comprehensive guides and references</p>
+        </div>
+
+        <div class="docs-grid">
+            <a href="./docs/installation.md" class="doc-link">
+                <h4>Installation Guide</h4>
+                <p>Bare-metal → Docker → Android deployment</p>
+            </a>
+            <a href="./docs/configuration.md" class="doc-link">
+                <h4>Configuration Manual</h4>
+                <p>200+ flags and tuning tables</p>
+            </a>
+            <a href="./tests/reports/PERFORMANCE_CLAIMS_VERIFICATION.md" class="doc-link">
+                <h4>Performance Verification</h4>
+                <p>Radical transparency on verified claims</p>
+            </a>
+            <a href="./CONTRIBUTING.md" class="doc-link">
+                <h4>Contributing Guide</h4>
+                <p>Join the silent revolution</p>
+            </a>
+            <a href="./DEPENDENCIES.md" class="doc-link">
+                <h4>Dependencies</h4>
+                <p>Complete dependency documentation</p>
+            </a>
+            <a href="./LICENSE" class="doc-link">
+                <h4>License</h4>
+                <p>MIT License details</p>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">Edge-TinyML v1.0</div>
+            
+            <div class="footer-badges">
+                <span class="badge">~17ms Latency</span>
+                <span class="badge">21/21 Blocked</span>
+                <span class="badge">6/8 Torture Tests</span>
+                <span class="badge">100% Offline</span>
+            </div>
+
+            <div class="footer-links">
+                <a href="https://github.com/Ariyan-Pro/Edge-TinyML-Project">GitHub</a>
+                <a href="https://github.com/Ariyan-Pro/Edge-TinyML-Project/issues">Issues</a>
+                <a href="https://github.com/Ariyan-Pro/Edge-TinyML-Project/releases">Releases</a>
+                <a href="./CONTRIBUTING.md">Contribute</a>
+            </div>
+
+            <p class="footer-copy">
+                Built by Ariyan-Pro · MIT License · Genius-Level Intelligence, Zero Cloud Dependencies
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Loading Screen
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 800);
+        });
+
+        // Scroll Progress Bar
+        const scrollProgress = document.getElementById('scrollProgress');
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            scrollProgress.style.width = scrollPercent + '%';
+        });
+
+        // Mouse Follower
+        const mouseFollower = document.getElementById('mouseFollower');
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let currentX = mouseX;
+        let currentY = mouseY;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateMouseFollower() {
+            currentX += (mouseX - currentX) * 0.1;
+            currentY += (mouseY - currentY) * 0.1;
+            mouseFollower.style.left = currentX + 'px';
+            mouseFollower.style.top = currentY + 'px';
+            requestAnimationFrame(animateMouseFollower);
+        }
+        animateMouseFollower();
+
+        // Intersection Observer for Animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    
+                    // Add staggered delay for children
+                    const children = entry.target.querySelectorAll('.bento-card, .security-card, .use-case-card');
+                    children.forEach((child, index) => {
+                        child.style.transitionDelay = (index * 0.1) + 's';
+                    });
+                }
+            });
+        }, observerOptions);
+
+        // Observe all animatable elements
+        document.querySelectorAll('.bento-section, .architecture, .security, .use-cases').forEach(section => {
+            observer.observe(section);
+        });
+
+        document.querySelectorAll('.pipeline-stage').forEach((stage, index) => {
+            stage.style.transitionDelay = (index * 0.2) + 's';
+            observer.observe(stage);
+        });
+
+        document.querySelectorAll('.bento-card:not(.visible)').forEach(card => {
+            observer.observe(card);
+        });
+
+        document.querySelectorAll('.security-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        document.querySelectorAll('.use-case-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Parallax effect on scroll
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            document.querySelectorAll('.parallax-layer').forEach(layer => {
+                layer.style.transform = `translateY(${scrolled * 0.5}px)`;
+            });
+        });
+
+        // Add glow effect on cards when hovering nearby
+        document.querySelectorAll('.bento-card, .security-card, .use-case-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.boxShadow = '0 0 40px rgba(255, 215, 0, 0.1)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.boxShadow = '';
+            });
+        });
+
+        // Counter animation for stats
+        function animateCounter(element, target, duration = 2000) {
+            let start = 0;
+            const increment = target / (duration / 16);
+            
+            function updateCounter() {
+                start += increment;
+                if (start < target) {
+                    element.textContent = Math.floor(start);
+                    requestAnimationFrame(updateCounter);
+                } else {
+                    element.textContent = target;
+                }
+            }
+            updateCounter();
+        }
+
+        // Trigger counter animation when stats are visible
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const statValues = entry.target.querySelectorAll('.stat-value');
+                    statValues.forEach(stat => {
+                        const text = stat.textContent;
+                        if (text.includes('ms')) {
+                            const num = parseInt(text);
+                            if (!isNaN(num)) animateCounter(stat, num);
+                        } else if (text.includes('MB')) {
+                            const num = parseInt(text);
+                            if (!isNaN(num)) animateCounter(stat, num);
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.5 });
+
+        const heroStats = document.querySelector('.hero-stats');
+        if (heroStats) statsObserver.observe(heroStats);
+
+        console.log('Edge-TinyML Landing Page Initialized');
+    </script>
+</body>
+</html>
