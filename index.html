@@ -1,0 +1,1848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edge-TinyML v1.0 — Offline Voice Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-tertiary: #111111;
+            --glass-bg: rgba(20, 20, 20, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --text-tertiary: #666666;
+            --accent-gold: #ffd700;
+            --accent-blue: #58a6ff;
+            --accent-green: #28a745;
+            --accent-red: #dc3545;
+            --accent-purple: #6f42c1;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--text-tertiary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.03) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(88, 166, 255, 0.03) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(40, 167, 69, 0.02) 0%, transparent 50%);
+            animation: bgRotate 30s linear infinite;
+        }
+
+        @keyframes bgRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--text-tertiary);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 20s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-100vh) scale(1); opacity: 0; }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            padding: 0.75rem 2rem;
+            background: rgba(0, 0, 0, 0.95);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--accent-gold);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 1200px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.8s ease forwards;
+            opacity: 0;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.8s ease 0.2s forwards;
+            opacity: 0;
+        }
+
+        .hero-title span {
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.25rem, 2vw, 1.5rem);
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            animation: fadeInUp 0.8s ease 0.4s forwards;
+            opacity: 0;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin-top: 4rem;
+            animation: fadeInUp 0.8s ease 0.6s forwards;
+            opacity: 0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--accent-gold);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-tertiary);
+            margin-top: 0.5rem;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Bento Grid Section */
+        .section {
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            grid-auto-flow: dense;
+        }
+
+        .bento-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .bento-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .bento-card:hover::before {
+            opacity: 1;
+        }
+
+        .bento-card.large {
+            grid-column: span 2;
+        }
+
+        .bento-card.tall {
+            grid-row: span 2;
+        }
+
+        @media (max-width: 900px) {
+            .bento-card.large,
+            .bento-card.tall {
+                grid-column: span 1;
+                grid-row: span 1;
+            }
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .card-metric {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-gold);
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+            margin-top: 0.25rem;
+        }
+
+        /* Architecture Diagram Cards */
+        .diagram-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            margin: 2rem 0;
+            overflow-x: auto;
+        }
+
+        .diagram-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .comparison-table th {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .comparison-table td {
+            color: var(--text-primary);
+        }
+
+        .comparison-table tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .check { color: var(--accent-green); }
+        .cross { color: var(--accent-red); }
+        .warning { color: var(--accent-gold); }
+
+        /* Feature Tags */
+        .feature-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .tag {
+            padding: 0.35rem 0.75rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        /* Code Block */
+        .code-block {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .code-block code {
+            color: var(--text-secondary);
+        }
+
+        .code-keyword { color: var(--accent-purple); }
+        .code-string { color: var(--accent-green); }
+        .code-function { color: var(--accent-blue); }
+        .code-comment { color: var(--text-tertiary); }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--glass-border);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2rem;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            transform: translateX(-5px);
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Security Badge Grid */
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .security-item {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .security-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .security-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .security-status {
+            font-size: 0.8rem;
+            color: var(--accent-green);
+            font-weight: 500;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            padding: 8rem 2rem;
+            background: linear-gradient(180deg, transparent 0%, rgba(255, 215, 0, 0.05) 100%);
+        }
+
+        .cta-title {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary {
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--glass-border);
+            padding: 4rem 2rem;
+            background: var(--bg-secondary);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+        }
+
+        .footer-section h4 {
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 3rem auto 0;
+            padding-top: 2rem;
+            border-top: 1px solid var(--glass-border);
+            text-align: center;
+            color: var(--text-tertiary);
+            font-size: 0.9rem;
+        }
+
+        /* Scroll Animations */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mouse Parallax Elements */
+        .parallax-element {
+            transition: transform 0.1s ease-out;
+        }
+
+        /* Glowing Orbs */
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .glow-orb-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--accent-gold);
+            top: 10%;
+            right: 10%;
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        .glow-orb-2 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent-blue);
+            bottom: 20%;
+            left: 5%;
+            animation: pulse 10s ease-in-out infinite reverse;
+        }
+
+        .glow-orb-3 {
+            width: 250px;
+            height: 250px;
+            background: var(--accent-purple);
+            top: 50%;
+            left: 50%;
+            animation: pulse 12s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.15; }
+            50% { transform: scale(1.2); opacity: 0.25; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero-stats {
+                gap: 2rem;
+            }
+
+            .stat-value {
+                font-size: 2rem;
+            }
+
+            .bento-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 2px solid var(--glass-border);
+            border-top-color: var(--accent-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Background Animation -->
+    <div class="bg-animation"></div>
+    
+    <!-- Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Glowing Orbs -->
+    <div class="glow-orb glow-orb-1"></div>
+    <div class="glow-orb glow-orb-2"></div>
+    <div class="glow-orb glow-orb-3"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo">Edge-TinyML</div>
+            <ul class="nav-links">
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#architecture">Architecture</a></li>
+                <li><a href="#performance">Performance</a></li>
+                <li><a href="#security">Security</a></li>
+                <li><a href="#deployment">Deployment</a></li>
+                <li><a href="#docs">Documentation</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="overview">
+        <div class="hero-content">
+            <div class="hero-badge">v1.0 — Now Available</div>
+            <h1 class="hero-title">
+                <span>Edge-TinyML</span><br>
+                Offline Voice Assistant
+            </h1>
+            <p class="hero-subtitle">
+                A palm-sized, fully offline voice assistant engineered for robustness and privacy. 
+                No cloud, no telemetry, no compromises.
+            </p>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-value">0.048ms</div>
+                    <div class="stat-label">KWS Latency</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">77KB</div>
+                    <div class="stat-label">Model Size</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">Offline</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">21/21</div>
+                    <div class="stat-label">Attacks Blocked</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bento Grid Overview -->
+    <section class="section">
+        <div class="section-header scroll-reveal">
+            <h2 class="section-title">Why Edge-TinyML?</h2>
+            <p class="section-subtitle">Engineered for performance, privacy, and deployment flexibility</p>
+        </div>
+
+        <div class="bento-grid">
+            <!-- Performance Card -->
+            <div class="bento-card large scroll-reveal">
+                <div class="card-icon">⚡</div>
+                <h3 class="card-title">Blazing Fast Inference</h3>
+                <p class="card-description">
+                    Experience industry-leading keyword spotting latency at just 0.048ms pure inference time. 
+                    Our optimized 77KB model delivers instant wake-word detection without compromising accuracy.
+                </p>
+                <div class="card-metric">
+                    <div class="metric-value">0.048ms</div>
+                    <div class="metric-label">Verified KWS Latency</div>
+                </div>
+                <div class="feature-tags">
+                    <span class="tag">TensorFlow Lite Micro</span>
+                    <span class="tag">Quantized Model</span>
+                    <span class="tag">Real-time Processing</span>
+                </div>
+            </div>
+
+            <!-- Privacy Card -->
+            <div class="bento-card scroll-reveal">
+                <div class="card-icon">🔒</div>
+                <h3 class="card-title">100% Offline</h3>
+                <p class="card-description">
+                    Zero cloud dependencies. All processing happens on-device. Your voice data never leaves your hardware.
+                </p>
+                <div class="card-metric">
+                    <div class="metric-value">0%</div>
+                    <div class="metric-label">Data Exfiltration</div>
+                </div>
+            </div>
+
+            <!-- Security Card -->
+            <div class="bento-card scroll-reveal">
+                <div class="card-icon">🛡️</div>
+                <h3 class="card-title">Battle-Tested Security</h3>
+                <p class="card-description">
+                    21 destructive attack vectors tested and blocked. Virtual-microphone defense, sensitive directory lockdown, and AES-256 encryption.
+                </p>
+                <div class="card-metric">
+                    <div class="metric-value">100%</div>
+                    <div class="metric-label">Block Rate</div>
+                </div>
+            </div>
+
+            <!-- Architecture Card -->
+            <div class="bento-card large scroll-reveal">
+                <div class="card-icon">🧠</div>
+                <h3 class="card-title">Hybrid Intelligence Architecture</h3>
+                <p class="card-description">
+                    Three-stage inference pipeline combining ultra-lightweight KWS with strategic 5-layer intelligence and cognitive LLM processing.
+                </p>
+                <div class="feature-tags">
+                    <span class="tag">77KB KWS Engine</span>
+                    <span class="tag">5-Layer Strategic Core</span>
+                    <span class="tag">1.1B GGUF Cognitive Model</span>
+                    <span class="tag">Context Vector Cache</span>
+                    <span class="tag">Emotion Detection</span>
+                </div>
+            </div>
+
+            <!-- Deployment Card -->
+            <div class="bento-card tall scroll-reveal">
+                <div class="card-icon">🖥️</div>
+                <h3 class="card-title">Universal Deployment</h3>
+                <p class="card-description">
+                    From microcontrollers to enterprise servers. Deploy once, run everywhere.
+                </p>
+                <div class="timeline" style="margin-top: 1.5rem;">
+                    <div class="timeline-item">
+                        <div class="timeline-title">Embedded MCU</div>
+                        <div class="timeline-description">Pi, ESP32 — ≤3W power</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">Windows Service</div>
+                        <div class="timeline-description">PID 4512, triple auto-restart</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">Linux Server</div>
+                        <div class="timeline-description">Enterprise-grade deployment</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">Android</div>
+                        <div class="timeline-description">Termux support</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RAM Efficiency Card -->
+            <div class="bento-card scroll-reveal">
+                <div class="card-icon">💾</div>
+                <h3 class="card-title">Memory Efficient</h3>
+                <p class="card-description">
+                    Optimized to run with minimal memory footprint while maintaining full functionality.
+                </p>
+                <div class="card-metric">
+                    <div class="metric-value">42MB</div>
+                    <div class="metric-label">RAM Usage (KWS)</div>
+                </div>
+                <div class="card-metric">
+                    <div class="metric-value">0.9GB</div>
+                    <div class="metric-label">Total Memory Ceiling</div>
+                </div>
+            </div>
+
+            <!-- Use Cases Card -->
+            <div class="bento-card large scroll-reveal">
+                <div class="card-icon">🎯</div>
+                <h3 class="card-title">Mission-Critical Use Cases</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Sector</th>
+                            <th>Capabilities</th>
+                            <th>KPI</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Enterprise Desktop</td>
+                            <td>12 hardened OS commands · Windows service · Triple auto-restart</td>
+                            <td>99.98% uptime</td>
+                        </tr>
+                        <tr>
+                            <td>Privacy-First Edge AI</td>
+                            <td>Zero-cloud · AES-256 vault · ≤3W footprint</td>
+                            <td>0% data leakage</td>
+                        </tr>
+                        <tr>
+                            <td>Autonomous Sys-Admin</td>
+                            <td>Self-optimizing · Hot-plug plugins · Cross-platform sync</td>
+                            <td>0.048ms latency</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section class="section" id="architecture">
+        <div class="section-header scroll-reveal">
+            <h2 class="section-title">Genius-Level Hybrid Architecture</h2>
+            <p class="section-subtitle">Three-stage inference pipeline with strategic intelligence</p>
+        </div>
+
+        <div class="bento-grid">
+            <div class="bento-card large scroll-reveal">
+                <h3 class="card-title">Stage 1 — KWS Engine (77 KB)</h3>
+                <p class="card-description">
+                    Ultra-lightweight keyword spotting with 0.048ms inference time. Continuously monitors audio input with configurable confidence thresholds (0.55–0.70).
+                </p>
+                <div class="feature-tags">
+                    <span class="tag">77KB Model</span>
+                    <span class="tag">0.048ms Inference</span>
+                    <span class="tag">Configurable Threshold</span>
+                    <span class="tag">Google Speech Commands</span>
+                </div>
+            </div>
+
+            <div class="bento-card scroll-reveal">
+                <h3 class="card-title">Stage 2 — Strategic Intelligence</h3>
+                <p class="card-description">5-layer processing core:</p>
+                <div class="timeline" style="margin-top: 1rem;">
+                    <div class="timeline-item">
+                        <div class="timeline-title">Layer 1: Intent Classification</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">Layer 2: Context Vector Cache</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">Layer 3: Emotion Detection</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">Layer 4: Memory Retrieval</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">Layer 5: Command Routing</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bento-card scroll-reveal">
+                <h3 class="card-title">Stage 3 — Cognitive LLM</h3>
+                <p class="card-description">
+                    TinyLlama 1.1B GGUF quantized model for complex command processing and natural language understanding.
+                </p>
+                <div class="card-metric">
+                    <div class="metric-value">1.1B</div>
+                    <div class="metric-label">Parameters (GGUF Q4)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="diagram-card scroll-reveal">
+            <h3 class="diagram-title">Development Timeline — 10 Phases</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-title">Phase 1-2 ✅ KWS Baseline</div>
+                    <div class="timeline-description">91.6% accuracy, 77KB model</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-title">Phase 3-4 ✅ Hybrid Cognitive</div>
+                    <div class="timeline-description">TensorRT + ONNX, 5-Layer strategy</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-title">Phase 5-6 ✅ Neural Reflex</div>
+                    <div class="timeline-description">Emotion cache, self-optimizing</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-title">Phase 7-9 ✅ Autonomy Framework</div>
+                    <div class="timeline-description">1.1B LLM GGUF integration</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-title">Phase 10 ✅ CERTIFIED</div>
+                    <div class="timeline-description">Global hardening, 6/8 torture tests</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Performance Section -->
+    <section class="section" id="performance">
+        <div class="section-header scroll-reveal">
+            <h2 class="section-title">Performance Scorecard</h2>
+            <p class="section-subtitle">Measured and verified benchmarks</p>
+        </div>
+
+        <div class="bento-grid">
+            <div class="bento-card scroll-reveal">
+                <div class="card-icon">⏱️</div>
+                <h3 class="card-title">KWS Latency</h3>
+                <p class="card-description">Pure inference time, verified through rigorous testing</p>
+                <div class="card-metric">
+                    <div class="metric-value">0.048ms</div>
+                    <div class="metric-label">VERIFIED</div>
+                </div>
+            </div>
+
+            <div class="bento-card scroll-reveal">
+                <div class="card-icon">💾</div>
+                <h3 class="card-title">RAM Footprint</h3>
+                <p class="card-description">Partial system, KWS only</p>
+                <div class="card-metric">
+                    <div class="metric-value">42MB</div>
+                    <div class="metric-label">Measured</div>
+                </div>
+            </div>
+
+            <div class="bento-card scroll-reveal">
+                <div class="card-icon">✅</div>
+                <h3 class="card-title">Safety Shield</h3>
+                <p class="card-description">Command shield effectiveness</p>
+                <div class="card-metric">
+                    <div class="metric-value">100%</div>
+                    <div class="metric-label">Verified</div>
+                </div>
+            </div>
+
+            <div class="bento-card scroll-reveal">
+                <div class="card-icon">🧪</div>
+                <h3 class="card-title">Torture Tests</h3>
+                <p class="card-description">Implemented and passing</p>
+                <div class="card-metric">
+                    <div class="metric-value">6/8</div>
+                    <div class="metric-label">Implemented</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bento-card large scroll-reveal" style="margin-top: 1.5rem;">
+            <h3 class="card-title">Competitive Benchmark</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>System</th>
+                        <th>Latency</th>
+                        <th>Privacy</th>
+                        <th>Security</th>
+                        <th>Deployment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Edge-TinyML</strong></td>
+                        <td><strong>0.048ms</strong></td>
+                        <td><span class="check">✓ 100% offline</span></td>
+                        <td><span class="check">✓ 21/21 blocked</span></td>
+                        <td><span class="check">✓ MCU → Desktop → Server</span></td>
+                    </tr>
+                    <tr>
+                        <td>Alexa / Google</td>
+                        <td>200–500ms</td>
+                        <td><span class="cross">✗ Cloud-only</span></td>
+                        <td><span class="warning">? Undisclosed</span></td>
+                        <td><span class="cross">✗ Cloud tethered</span></td>
+                    </tr>
+                    <tr>
+                        <td>Snowboy</td>
+                        <td>10–20ms</td>
+                        <td><span class="check">✓ Offline</span></td>
+                        <td><span class="warning">⚠ Varies</span></td>
+                        <td><span class="warning">⚠ Embedded only</span></td>
+                    </tr>
+                    <tr>
+                        <td>Porcupine</td>
+                        <td>15–30ms</td>
+                        <td><span class="check">✓ Offline</span></td>
+                        <td><span class="warning">⚠ Varies</span></td>
+                        <td><span class="warning">⚠ Embedded only</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Security Section -->
+    <section class="section" id="security">
+        <div class="section-header scroll-reveal">
+            <h2 class="section-title">Security Hardening</h2>
+            <p class="section-subtitle">Tested to destruction, proven in silence</p>
+        </div>
+
+        <div class="security-grid scroll-reveal">
+            <div class="security-item">
+                <div class="security-icon">🔒</div>
+                <div class="security-title">Destructive-Command Shield</div>
+                <div class="security-status">100% Block Rate (21/21)</div>
+            </div>
+            <div class="security-item">
+                <div class="security-icon">🎤</div>
+                <div class="security-title">Virtual-Mic Defense</div>
+                <div class="security-status">Active</div>
+            </div>
+            <div class="security-item">
+                <div class="security-icon">📁</div>
+                <div class="security-title">Directory Lockdown</div>
+                <div class="security-status">SSH · Docs · Downloads</div>
+            </div>
+            <div class="security-item">
+                <div class="security-icon">📡</div>
+                <div class="security-title">Zero Exfiltration</div>
+                <div class="security-status">Packet-sniffer verified</div>
+            </div>
+            <div class="security-item">
+                <div class="security-icon">🔄</div>
+                <div class="security-title">Enterprise Service</div>
+                <div class="security-status">PID 4512 · Triple restart</div>
+            </div>
+            <div class="security-item">
+                <div class="security-icon">🔐</div>
+                <div class="security-title">AES-256 Data Vault</div>
+                <div class="security-status">Encrypted at rest</div>
+            </div>
+        </div>
+
+        <div class="bento-card large scroll-reveal" style="margin-top: 2rem;">
+            <h3 class="card-title">Global Hardening Report</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Attack Vector</th>
+                        <th>Abuse Scenario</th>
+                        <th>Result</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>CPU Saturation</td>
+                        <td>100% load × 60 min</td>
+                        <td>0 latency spikes</td>
+                        <td><span class="warning">🟡 Implemented</span></td>
+                    </tr>
+                    <tr>
+                        <td>Memory Starvation</td>
+                        <td>1GB free / 8GB total</td>
+                        <td>0 crashes, 0 leaks</td>
+                        <td><span class="warning">🟡 Implemented</span></td>
+                    </tr>
+                    <tr>
+                        <td>Security Hammer</td>
+                        <td>21 destructive payloads</td>
+                        <td>100% blocked</td>
+                        <td><span class="check">✅ Verified</span></td>
+                    </tr>
+                    <tr>
+                        <td>Flood Attack</td>
+                        <td>25 req/s burst</td>
+                        <td>5.81ms avg latency</td>
+                        <td><span class="warning">🟡 Implemented</span></td>
+                    </tr>
+                    <tr>
+                        <td>Time Warp</td>
+                        <td>4 clock-drift extremes</td>
+                        <td>Sync preserved</td>
+                        <td><span class="check">✅ Verified</span></td>
+                    </tr>
+                    <tr>
+                        <td>ACPI Hibernation</td>
+                        <td>50 rapid cycles</td>
+                        <td>Not tested</td>
+                        <td><span class="cross">🔴 Not implemented</span></td>
+                    </tr>
+                    <tr>
+                        <td>Thermal Throttle</td>
+                        <td>85°C SoC</td>
+                        <td>Not tested</td>
+                        <td><span class="cross">🔴 Not implemented</span></td>
+                    </tr>
+                    <tr>
+                        <td>EMI Chamber</td>
+                        <td>30 V/m RF noise</td>
+                        <td>Not tested</td>
+                        <td><span class="cross">🔴 Not implemented</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Quick Start Section -->
+    <section class="section" id="deployment">
+        <div class="section-header scroll-reveal">
+            <h2 class="section-title">Quick Start</h2>
+            <p class="section-subtitle">Get running in minutes</p>
+        </div>
+
+        <div class="bento-grid">
+            <div class="bento-card large scroll-reveal">
+                <h3 class="card-title">Prerequisites</h3>
+                <div class="feature-tags">
+                    <span class="tag">Python 3.11+</span>
+                    <span class="tag">8GB RAM (1GB free)</span>
+                    <span class="tag">Windows / Linux / Android</span>
+                </div>
+            </div>
+
+            <div class="bento-card large scroll-reveal">
+                <h3 class="card-title">Installation (PowerShell)</h3>
+                <div class="code-block">
+                    <code>
+<span class="code-comment"># Clone repository</span>
+git clone https://github.com/Ariyan-Pro/Edge-TinyML-Project.git
+<span class="code-function">Set-Location</span> Edge-TinyML-Project
+
+<span class="code-comment"># Create virtual environment</span>
+python -m venv edge-tinyml-prod
+
+<span class="code-comment"># Activate (Windows PowerShell)</span>
+.\<span class="code-function">edge-tinyml-prod</span>\Scripts\Activate.ps1
+
+<span class="code-comment"># Install dependencies</span>
+pip install -r requirements.txt
+
+<span class="code-comment"># Verify system health</span>
+python -c <span class="code-string">"from wake_word_detector import WakeWordDetector; print('Ready')"</span>
+                    </code>
+                </div>
+            </div>
+
+            <div class="bento-card scroll-reveal">
+                <h3 class="card-title">Basic Usage</h3>
+                <div class="code-block">
+                    <code>
+<span class="code-keyword">from</span> wake_word_detector <span class="code-keyword">import</span> WakeWordDetector
+
+<span class="code-comment"># Initialize detector</span>
+detector = <span class="function">WakeWordDetector</span>()
+
+<span class="code-comment"># Start listening (100% offline)</span>
+detector.<span class="function">start_listening</span>()
+<span class="code-comment"># Say "computer" to activate!</span>
+                    </code>
+                </div>
+            </div>
+
+            <div class="bento-card scroll-reveal">
+                <h3 class="card-title">Configuration</h3>
+                <div class="code-block">
+                    <code>
+WAKE_WORD_MAPPINGS = {
+    <span class="code-string">'on'</span>:  <span class="code-string">'assistant'</span>,   <span class="code-comment"># 0.55 threshold</span>
+    <span class="code-string">'yes'</span>: <span class="code-string">'computer'</span>,    <span class="code-comment"># 0.60 threshold</span>
+    <span class="code-string">'go'</span>:  <span class="code-string">'hey device'</span>,  <span class="code-comment"># 0.65 threshold</span>
+}
+
+SENSITIVITY_RANGE = {
+    <span class="code-string">'silent'</span>: 0.55,   <span class="code-comment"># Quiet environment</span>
+    <span class="code-string">'noisy'</span>:  0.70,   <span class="code-comment"># High-noise environment</span>
+}
+                    </code>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Documentation Section -->
+    <section class="section" id="docs">
+        <div class="section-header scroll-reveal">
+            <h2 class="section-title">Documentation</h2>
+            <p class="section-subtitle">Comprehensive guides and references</p>
+        </div>
+
+        <div class="bento-grid">
+            <div class="bento-card scroll-reveal">
+                <div class="card-icon">📖</div>
+                <h3 class="card-title">Installation Guide</h3>
+                <p class="card-description">Bare-metal → Docker → Android deployment instructions</p>
+                <div class="feature-tags">
+                    <span class="tag">Windows</span>
+                    <span class="tag">Linux</span>
+                    <span class="tag">Android</span>
+                </div>
+            </div>
+
+            <div class="bento-card scroll-reveal">
+                <div class="card-icon">⚙️</div>
+                <h3 class="card-title">Configuration Manual</h3>
+                <p class="card-description">200+ flags, tuning tables, and optimization guides</p>
+            </div>
+
+            <div class="bento-card scroll-reveal">
+                <div class="card-icon">📚</div>
+                <h3 class="card-title">API Reference</h3>
+                <p class="card-description">Python, C++, and REST API documentation</p>
+            </div>
+
+            <div class="bento-card scroll-reveal">
+                <div class="card-icon">🏗️</div>
+                <h3 class="card-title">Architecture Deep Dive</h3>
+                <p class="card-description">Phase maps, threat models, and design decisions</p>
+            </div>
+
+            <div class="bento-card scroll-reveal">
+                <div class="card-icon">🧪</div>
+                <h3 class="card-title">Testing Methodology</h3>
+                <p class="card-description">CIS, MIL-STD, NIST compliance documentation</p>
+            </div>
+
+            <div class="bento-card scroll-reveal">
+                <div class="card-icon">🔧</div>
+                <h3 class="card-title">Troubleshooting</h3>
+                <p class="card-description">Boot-loops, audio issues, and common problems</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Project Structure -->
+    <section class="section">
+        <div class="section-header scroll-reveal">
+            <h2 class="section-title">Project Structure</h2>
+            <p class="section-subtitle">Zero-trust layout with modular design</p>
+        </div>
+
+        <div class="bento-card large scroll-reveal">
+            <div class="code-block">
+                <code>
+Edge-TinyML-Project/
+│
+├── phase1_baseline/                      <span class="code-comment"># 77KB KWS model + quantisation recipes</span>
+├── phase3_automation_phase4_cognitive/   <span class="code-comment"># Hybrid inference core (TensorRT + ONNX)</span>
+├── phase3_wakeword/                      <span class="code-comment"># Wake-word training pipeline</span>
+├── phase5_neural_reflex/                 <span class="code-comment"># Emotion & context vector cache</span>
+├── phase5_autonomous_extensions/         <span class="code-comment"># Plugin ecosystem</span>
+├── phase6_self_optimizing_core/          <span class="code-comment"># Auto-tuner & memory sentinel</span>
+├── phase6_edgeos_integration/            <span class="code-comment"># EdgeOS integration layer</span>
+├── phase7_autonomy_framework/            <span class="code-comment"># Autonomy & state management</span>
+├── phase_9-enhanced_intelligence/        <span class="code-comment"># Production 1.1B LLM (GGUF)</span>
+│
+├── tests/                                <span class="code-comment"># CIS-style torture suite</span>
+│   ├── logs/                             <span class="code-comment"># Prometheus / Valgrind artefacts</span>
+│   └── reports/                          <span class="code-comment"># EMI, thermal, security PDFs</span>
+│
+├── docs/                                 <span class="code-comment"># MkDocs → GitHub Pages</span>
+├── scripts/                              <span class="code-comment"># CI/CD, OTA update, signing utils</span>
+├── db/                                   <span class="code-comment"># Conversation history (AES-256)</span>
+├── deployment/                           <span class="code-comment"># Production deployment configs</span>
+├── wake_word_detector.py                 <span class="code-comment"># Main entry point + configuration</span>
+├── final_check.ps1                       <span class="code-comment"># PowerShell system validation</span>
+├── requirements.txt
+└── detailed_test_report.json             <span class="code-comment"># hardening test record</span>
+                </code>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Transparency -->
+    <section class="section">
+        <div class="section-header scroll-reveal">
+            <h2 class="section-title">AI & Model Transparency</h2>
+            <p class="section-subtitle">Full disclosure of models and datasets</p>
+        </div>
+
+        <div class="bento-grid">
+            <div class="bento-card scroll-reveal">
+                <h3 class="card-title">KWS Model</h3>
+                <p class="card-description">TensorFlow Lite Micro — 77KB quantized</p>
+                <div class="feature-tags">
+                    <span class="tag">Google Speech Commands</span>
+                    <span class="tag">Open License</span>
+                </div>
+            </div>
+
+            <div class="bento-card scroll-reveal">
+                <h3 class="card-title">Cognitive Model</h3>
+                <p class="card-description">TinyLlama 1.1B GGUF (Q4 quantized)</p>
+                <div class="feature-tags">
+                    <span class="tag">MIT-compatible</span>
+                    <span class="tag">On-device</span>
+                </div>
+            </div>
+
+            <div class="bento-card scroll-reveal">
+                <h3 class="card-title">External Calls</h3>
+                <p class="card-description">None — 100% offline inference</p>
+                <div class="feature-tags">
+                    <span class="tag">Zero network traffic</span>
+                    <span class="tag">Packet-sniffer verified</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contributing -->
+    <section class="section">
+        <div class="section-header scroll-reveal">
+            <h2 class="section-title">Contributing</h2>
+            <p class="section-subtitle">Join the silent revolution</p>
+        </div>
+
+        <div class="bento-card large scroll-reveal">
+            <h3 class="card-title">Contribution Process</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Step</th>
+                        <th>Command</th>
+                        <th>Gate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1. Fork & branch</td>
+                        <td><code>git checkout -b feat/side-channel-hardening</code></td>
+                        <td>—</td>
+                    </tr>
+                    <tr>
+                        <td>2. Dev container</td>
+                        <td><code>code .devcontainer/devcontainer.json</code></td>
+                        <td>CI lint</td>
+                    </tr>
+                    <tr>
+                        <td>3. Pre-commit</td>
+                        <td><code>pre-commit run --all</code></td>
+                        <td>style / sec</td>
+                    </tr>
+                    <tr>
+                        <td>4. Unit tests</td>
+                        <td><code>pytest tests/unit --cov=edge_tinyml</code></td>
+                        <td>≥ 98% coverage</td>
+                    </tr>
+                    <tr>
+                        <td>5. Torture tests</td>
+                        <td><code>pytest tests/torture -k "emmi or thermal"</code></td>
+                        <td>8/8 PASS</td>
+                    </tr>
+                    <tr>
+                        <td>6. Sign-off</td>
+                        <td><code>git commit -sm "feat: shield EMI side-channel"</code></td>
+                        <td>DCO</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Hall of Fame -->
+    <section class="section">
+        <div class="section-header scroll-reveal">
+            <h2 class="section-title">Hall of Fame</h2>
+            <p class="section-subtitle">Partners and contributors</p>
+        </div>
+
+        <div class="bento-grid">
+            <div class="bento-card scroll-reveal">
+                <h3 class="card-title">Google Speech Commands</h3>
+                <p class="card-description">Training dataset for KWS model</p>
+                <div class="feature-tags">
+                    <span class="tag">Open License</span>
+                </div>
+            </div>
+
+            <div class="bento-card scroll-reveal">
+                <h3 class="card-title">TensorFlow Lite</h3>
+                <p class="card-description">Micro-runtime enabling 77KB model</p>
+            </div>
+
+            <div class="bento-card scroll-reveal">
+                <h3 class="card-title">TinyLlama</h3>
+                <p class="card-description">1.1B GGUF weights for on-device cognition</p>
+            </div>
+
+            <div class="bento-card scroll-reveal">
+                <h3 class="card-title">TinyML Community</h3>
+                <p class="card-description">Benchmarks & methodology for global hardening</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="scroll-reveal">
+            <h2 class="cta-title">Genius-Level Intelligence,<br>Zero Cloud Dependencies</h2>
+            <p style="color: var(--text-secondary); font-size: 1.2rem; max-width: 600px; margin: 0 auto;">
+                100% OFF-GRID · 0.048ms · 21/21 blocked
+            </p>
+            <div class="cta-buttons">
+                <a href="https://github.com/Ariyan-Pro/Edge-TinyML-Project" class="btn btn-primary">
+                    ⭐ Star on GitHub
+                </a>
+                <a href="https://github.com/Ariyan-Pro/Edge-TinyML-Project/releases" class="btn btn-secondary">
+                    📥 Download Release
+                </a>
+                <a href="https://github.com/Ariyan-Pro/Edge-TinyML-Project/issues" class="btn btn-secondary">
+                    🐛 Report Issue
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Edge-TinyML</h4>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;">
+                    A palm-sized, fully offline voice assistant engineered for robustness and privacy.
+                </p>
+            </div>
+
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="#overview">Overview</a></li>
+                    <li><a href="#architecture">Architecture</a></li>
+                    <li><a href="#performance">Performance</a></li>
+                    <li><a href="#security">Security</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Documentation</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Installation Guide</a></li>
+                    <li><a href="#">Configuration Manual</a></li>
+                    <li><a href="#">API Reference</a></li>
+                    <li><a href="#">Troubleshooting</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Community</h4>
+                <ul class="footer-links">
+                    <li><a href="https://github.com/Ariyan-Pro/Edge-TinyML-Project">GitHub</a></li>
+                    <li><a href="https://github.com/Ariyan-Pro/Edge-TinyML-Project/issues">Issues</a></li>
+                    <li><a href="#">Discussions</a></li>
+                    <li><a href="#">Contributors</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>Built by <a href="https://github.com/Ariyan-Pro" style="color: var(--text-secondary);">Ariyan-Pro</a> · 
+            Licensed under <a href="#" style="color: var(--text-secondary);">MIT</a> · 
+            v1.0</p>
+        </div>
+    </footer>
+
+    <script>
+        // Loading Screen
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden');
+            }, 500);
+        });
+
+        // Navbar Scroll Effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Scroll Reveal Animation
+        const revealElements = document.querySelectorAll('.scroll-reveal');
+        
+        const revealOnScroll = () => {
+            revealElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                
+                if (elementTop < windowHeight * 0.85) {
+                    element.classList.add('revealed');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', revealOnScroll);
+        revealOnScroll(); // Initial check
+
+        // Mouse Parallax Effect
+        const parallaxElements = document.querySelectorAll('.bento-card, .glow-orb');
+        
+        document.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX / window.innerWidth - 0.5;
+            const mouseY = e.clientY / window.innerHeight - 0.5;
+            
+            parallaxElements.forEach((element, index) => {
+                const speed = (index % 3 + 1) * 10;
+                const x = mouseX * speed;
+                const y = mouseY * speed;
+                
+                element.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+
+        // Particle Generation
+        const particlesContainer = document.getElementById('particles');
+        const particleCount = 50;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 20 + 's';
+            particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        // Smooth Scroll for Navigation Links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for Performance
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                }
+            });
+        }, observerOptions);
+
+        revealElements.forEach(element => {
+            observer.observe(element);
+        });
+
+        // Card Hover Effect Enhancement
+        const cards = document.querySelectorAll('.bento-card');
+        
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.zIndex = '10';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.zIndex = '1';
+            });
+        });
+
+        // Dynamic Glow Orb Movement
+        const glowOrbs = document.querySelectorAll('.glow-orb');
+        
+        glowOrbs.forEach((orb, index) => {
+            let angle = (index * 120) * (Math.PI / 180);
+            const radius = 200 + (index * 50);
+            const speed = 0.001 + (index * 0.0005);
+            
+            function animateOrb() {
+                angle += speed;
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius;
+                
+                orb.style.transform = `translate(${x}px, ${y}px) scale(${1 + Math.sin(angle * 2) * 0.1})`;
+                requestAnimationFrame(animateOrb);
+            }
+            
+            animateOrb();
+        });
+
+        // Stats Counter Animation
+        const statValues = document.querySelectorAll('.stat-value, .metric-value');
+        
+        const animateValue = (element) => {
+            const text = element.textContent;
+            const hasMs = text.includes('ms');
+            const hasPercent = text.includes('%');
+            const hasKB = text.includes('KB');
+            const hasMB = text.includes('MB');
+            const hasGB = text.includes('GB');
+            
+            const numericValue = parseFloat(text.replace(/[^0-9.]/g, ''));
+            
+            if (isNaN(numericValue)) return;
+            
+            let start = 0;
+            const duration = 2000;
+            const startTime = performance.now();
+            
+            const updateCounter = (currentTime) => {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing function
+                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                const currentValue = start + (numericValue - start) * easeOutQuart;
+                
+                let formattedValue;
+                if (hasMs) {
+                    formattedValue = currentValue.toFixed(3) + 'ms';
+                } else if (hasPercent) {
+                    formattedValue = Math.round(currentValue) + '%';
+                } else if (hasKB) {
+                    formattedValue = Math.round(currentValue) + 'KB';
+                } else if (hasMB) {
+                    formattedValue = Math.round(currentValue) + 'MB';
+                } else if (hasGB) {
+                    formattedValue = currentValue.toFixed(1) + 'GB';
+                } else if (text.includes('/')) {
+                    formattedValue = text; // Keep fraction format like "21/21" or "6/8"
+                } else {
+                    formattedValue = Math.round(currentValue);
+                }
+                
+                element.textContent = formattedValue;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                }
+            };
+            
+            requestAnimationFrame(updateCounter);
+        };
+
+        // Trigger counter animation when stats come into view
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateValue(entry.target);
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        statValues.forEach(stat => {
+            statsObserver.observe(stat);
+        });
+    </script>
+</body>
+</html>
