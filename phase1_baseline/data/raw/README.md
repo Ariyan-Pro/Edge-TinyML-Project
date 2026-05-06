@@ -141,6 +141,7 @@ noise. For more details, see the `_background_noise_/README.md`.
 
 If you use the Speech Commands dataset in your work, please cite it as:
 
+{% raw %}
 ```
 @article{speechcommandsv2,
    author = {{Warden}, P.},
@@ -155,6 +156,7 @@ archivePrefix = "arXiv",
     url = {https://arxiv.org/abs/1804.03209},
 }
 ```
+{% endraw %}
 
 ## Credits
 
